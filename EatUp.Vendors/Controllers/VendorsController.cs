@@ -2,6 +2,8 @@
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Services;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace EatUp.Vendors.Controllers
 {
@@ -10,7 +12,7 @@ namespace EatUp.Vendors.Controllers
     public class VendorsController(IVendorservice vendorService): ControllerBase
     {
 
-        [HttpPost]
+        [HttpPost("signup")]
         public async Task<IActionResult> AddVendor([FromBody] AddVendorDTO vendorDTO)
         {
             try

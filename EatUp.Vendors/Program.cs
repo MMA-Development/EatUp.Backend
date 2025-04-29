@@ -1,4 +1,3 @@
-using EatUp.Vendors.AppSettings;
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Repositories;
 using EatUp.Vendors.Services;

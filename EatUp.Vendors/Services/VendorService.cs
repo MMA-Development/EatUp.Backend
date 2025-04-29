@@ -1,5 +1,4 @@
-﻿using EatUp.Vendors.AppSettings;
-using EatUp.Vendors.DTO;
+﻿using EatUp.Vendors.DTO;
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Repositories;
 using Microsoft.Extensions.Options;
