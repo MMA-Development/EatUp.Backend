@@ -71,6 +71,7 @@ namespace EatUp.Vendors.Models
         {
             var builder = modelBuilder.Entity<TEntity>()
                 .HasIndex(column);
+
             if (isUnique)
                 builder.IsUnique();
 

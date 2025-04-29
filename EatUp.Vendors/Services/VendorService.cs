@@ -150,5 +150,14 @@ namespace EatUp.Vendors.Services
             vendorDTO.Merge(vendorFromDb);
             await repository.Save();
         }
+
+        public async Task<VendorDTO> GetVendorById(Guid vendorId)
+        {
+            var vendor = await repository.GetById(vendorId);
+            if (vendor == null)
+                throw new ArgumentException("Vendor not found");
+
+            return VendorDTO.FromVendor(vendor);
+        }
     }
 }

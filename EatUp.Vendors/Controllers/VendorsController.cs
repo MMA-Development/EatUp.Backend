@@ -62,6 +62,20 @@ namespace EatUp.Vendors.Controllers
             return Ok(Vendors);
         }
 
+        [HttpGet("{vendorId:guid}")]
+        public async Task<IActionResult> GetVendor([FromRoute] Guid vendorId)
+        {
+            try
+            {
+                VendorDTO vendor = await vendorService.GetVendorById(vendorId);
+                return Ok(vendor);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }   
+
         [HttpDelete]
         public async Task<IActionResult> Delete(Guid id)
         {
