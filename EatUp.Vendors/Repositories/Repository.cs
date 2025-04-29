@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EatUp.Vendors.Repositories
 {
-    public class Repository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
         private readonly Context _context;
         public Repository(Context context)
@@ -66,6 +66,11 @@ namespace EatUp.Vendors.Repositories
             }
 
             return Task.CompletedTask;
+        }
+
+        public Task<bool> Exist(Expression<Func<TEntity, bool>> query)
+        {
+            return Task.FromResult(_context.Set<TEntity>().Any(query));
         }
     }
 }

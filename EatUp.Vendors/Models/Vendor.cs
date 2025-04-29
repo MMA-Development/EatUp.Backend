@@ -7,8 +7,8 @@
         public string Cvr { get; set; } = null!;
         public string Username { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public float Longitude { get; set; }
-        public float Latitude { get; set; }
+        public double Longitude { get; set; }
+        public double Latitude { get; set; }
         public string StripeAccountId { get; set; } = null!;
     }
 }

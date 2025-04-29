@@ -1,4 +1,5 @@
-﻿using EatUp.Vendors.Models;
+﻿using EatUp.Vendors.DTO;
+using EatUp.Vendors.Models;
 using EatUp.Vendors.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +11,11 @@ namespace EatUp.Vendors.Controllers
     {
 
         [HttpPost]
-        public IActionResult AddVendor([FromBody] Vendor vendor)
+        public async Task<IActionResult> AddVendor([FromBody] AddVendorDTO vendorDTO)
         {
             try
             {
-                vendorService.AddVendor(vendor);
-                return Ok();
+                return Ok(await vendorService.AddVendor(vendorDTO));
             }
             catch (ArgumentException ex)
             {
