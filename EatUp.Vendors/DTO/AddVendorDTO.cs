@@ -1,22 +1,30 @@
-﻿using EatUp.Vendors.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using EatUp.Vendors.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace EatUp.Vendors.DTO
 {
     public class AddVendorDTO
     {
+        [Required]
         public string Name { get; set; } = null!;
 
+        [Required]
         public string Password { get; set; } = null!;
 
+        [Required]
         public string Username { get; set; } = null!;
 
+        [Required]
         public string CVR { get; set; } = null!;
 
+        [Required]
         public double Longitude { get; set; }
 
-        public string Email { get; set; }
+        [Required]
+        public string Email { get; set; } = null!;
 
+        [Required]
         public double Latitude { get; set; }
 
         public Vendor ToVendor()
@@ -29,6 +37,7 @@ namespace EatUp.Vendors.DTO
                 Longitude = Longitude,
                 Latitude = Latitude,
                 Logo = "default",
+                Email = Email,
             };
             var hasher = new PasswordHasher<Vendor>();
             vendor.Password = hasher.HashPassword(vendor, Password);

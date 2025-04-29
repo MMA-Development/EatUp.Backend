@@ -1,6 +1,8 @@
-﻿using EatUp.Vendors.DTO;
+﻿using System.Text.Json;
+using EatUp.Vendors.DTO;
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stripe;
 using Swashbuckle.AspNetCore.Annotations;
@@ -38,7 +40,22 @@ namespace EatUp.Vendors.Controllers
             }
         }
 
+        [HttpPut("{vendorId:guid}")]
+        public async Task<IActionResult> UpdateVendor([FromBody] UpdateVendorDTO vendorDTO, [FromRoute] Guid vendorId)
+        {
+            try
+            {
+                await vendorService.UpdateVendor(vendorDTO, vendorId);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet]
+        [AllowAnonymous]
         public async Task<IActionResult> GetPage(int skip = 0, int take = 10)
         {
             var Vendors = await vendorService.GetPage(skip, take);

@@ -140,5 +140,15 @@ namespace EatUp.Vendors.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        public async Task UpdateVendor(UpdateVendorDTO vendorDTO, Guid vendorId)
+        {
+            var vendorFromDb = await repository.GetById(vendorId, true); ;
+            if (vendorFromDb == null)
+                throw new ArgumentException("Vendor not found");
+
+            vendorDTO.Merge(vendorFromDb);
+            await repository.Save();
+        }
     }
 }

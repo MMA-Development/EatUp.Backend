@@ -10,5 +10,6 @@ namespace EatUp.Vendors.Services
         Task<VendorTokens> SignIn(SignInVendorDTO addVendor);
         Task Delete(Guid id);
         Task<PaginationResult<Vendor>> GetPage(int skip, int take);
+        Task UpdateVendor(UpdateVendorDTO vendorDTO, Guid vendorId);
     }
 }

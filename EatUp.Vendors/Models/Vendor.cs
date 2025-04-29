@@ -6,6 +6,7 @@
         public string Logo { get; set; } = null!;
         public string Cvr { get; set; } = null!;
         public string Username { get; set; } = null!;
+        public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
         public double Longitude { get; set; }
         public double Latitude { get; set; }
