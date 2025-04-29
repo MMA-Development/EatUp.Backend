@@ -1,7 +1,13 @@
-﻿using EatUp.Vendors.DTO;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
+using EatUp.Vendors.DTO;
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Repositories;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Stripe;
 
 namespace EatUp.Vendors.Services
@@ -75,6 +81,64 @@ namespace EatUp.Vendors.Services
         {
             await repository.Delete(id);
             await repository.Save();
+        }
+
+        public async Task<VendorTokens> SignIn(SignInVendorDTO signInVendor)
+        {
+            var user = await repository.GetByExpression(x => x.Username == signInVendor.Username);
+            if (user == null)
+                throw new ArgumentException("User not found");
+
+            if (!(await PasswordIsValid(user, signInVendor.Password)))
+            {
+                throw new ArgumentException("User not found");
+            }
+
+            var accessToken = GenerateAccessToken(user.Id.ToString(), user.Username, configuration["JWT:Secret"]);
+            var refreshToken = GenerateRefreshToken();
+
+            return new VendorTokens
+            {
+                RefreshToken = refreshToken,
+                AccessToken = accessToken,
+            };
+        }
+
+        private async Task<bool> PasswordIsValid(Vendor user, string password)
+        {
+            var passwordHasher = new PasswordHasher<Vendor>();
+            var result = passwordHasher.VerifyHashedPassword(user, user.Password, password);
+            return result == PasswordVerificationResult.Success;
+        }
+
+        private string GenerateRefreshToken()
+        {
+            var randomBytes = new byte[64];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomBytes);
+            }
+            return Convert.ToBase64String(randomBytes);
+        }
+
+        private string GenerateAccessToken(string userId, string username, string secretKey)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.UTF8.GetBytes(secretKey);
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, userId),
+                    new Claim(ClaimTypes.Name, username)
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(15),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            return tokenHandler.WriteToken(token);
         }
     }
 }

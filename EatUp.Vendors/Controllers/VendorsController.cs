@@ -9,7 +9,7 @@ namespace EatUp.Vendors.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class VendorsController(IVendorservice vendorService): ControllerBase
+    public class VendorsController(IVendorservice vendorService) : ControllerBase
     {
 
         [HttpPost("signup")]
@@ -22,6 +22,19 @@ namespace EatUp.Vendors.Controllers
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("signin")]
+        public async Task<IActionResult> SignIn([FromBody] SignInVendorDTO signInVendor)
+        {
+            try
+            {
+                return Ok(await vendorService.SignIn(signInVendor));
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
             }
         }
 

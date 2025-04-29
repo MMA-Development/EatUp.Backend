@@ -21,8 +21,8 @@ namespace EatUp.Vendors.Migrations
                     Cvr = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Longitude = table.Column<double>(type: "real", nullable: false),
-                    Latitude = table.Column<double>(type: "real", nullable: false),
+                    Longitude = table.Column<double>(type: "float", nullable: false),
+                    Latitude = table.Column<double>(type: "float", nullable: false),
                     StripeAccountId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -36,8 +36,7 @@ namespace EatUp.Vendors.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Vendors_Name_Longitude_Latitude",
                 table: "Vendors",
-                columns: new[] { "Name", "Longitude", "Latitude" },
-                unique: true);
+                columns: new[] { "Name", "Longitude", "Latitude" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Vendors_StripeAccountId",

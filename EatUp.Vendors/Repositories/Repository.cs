@@ -72,5 +72,10 @@ namespace EatUp.Vendors.Repositories
         {
             return Task.FromResult(_context.Set<TEntity>().Any(query));
         }
+
+        public async Task<TEntity?> GetByExpression(Expression<Func<TEntity, bool>> query, bool tracking = false, params Expression<Func<TEntity, object>>[] includes)
+        {
+            return await _context.GetQuery(tracking, includes).FirstOrDefaultAsync(query);
+        }
     }
 }

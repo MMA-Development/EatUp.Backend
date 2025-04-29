@@ -12,5 +12,6 @@ namespace EatUp.Vendors.Repositories
         Task Delete(Guid id);
         Task<bool> Exist(Expression<Func<TEntity, bool>> query);
         Task Save();
+        Task<TEntity?> GetByExpression(Expression<Func<TEntity, bool>> query, bool tracking = false, params Expression<Func<TEntity, object>>[] includes);
     }
 }

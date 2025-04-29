@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EatUp.Vendors.Migrations
 {
     [DbContext(typeof(Context))]
-    [Migration("20250428114949_InitialCreate")]
+    [Migration("20250429094735_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -41,15 +41,15 @@ namespace EatUp.Vendors.Migrations
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<float>("Latitude")
-                        .HasColumnType("real");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Logo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float>("Longitude")
-                        .HasColumnType("real");
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -78,8 +78,7 @@ namespace EatUp.Vendors.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.HasIndex("Name", "Longitude", "Latitude")
-                        .IsUnique();
+                    b.HasIndex("Name", "Longitude", "Latitude");
 
                     b.ToTable("Vendors");
                 });
