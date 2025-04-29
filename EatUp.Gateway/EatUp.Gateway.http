@@ -1,0 +1,6 @@
+@EatUp.Gateway_HostAddress = http://localhost:5025
+
+GET {{EatUp.Gateway_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
