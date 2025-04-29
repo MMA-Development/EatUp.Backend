@@ -75,8 +75,7 @@ namespace EatUp.Vendors.Migrations
                     b.HasIndex("Username")
                         .IsUnique();
 
-                    b.HasIndex("Name", "Longitude", "Latitude")
-                        .IsUnique();
+                    b.HasIndex("Name", "Longitude", "Latitude");
 
                     b.ToTable("Vendors");
                 });

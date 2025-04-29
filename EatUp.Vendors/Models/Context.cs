@@ -43,7 +43,7 @@ namespace EatUp.Vendors.Models
             //Id is already Index, since it is a primary key in BaseEntity
             AddIndex<Vendor>(modelBuilder, x => x.Username);
             AddIndex<Vendor>(modelBuilder, x => x.StripeAccountId);
-            AddIndex<Vendor>(modelBuilder, x => new { x.Name, x.Longitude, x.Latitude });
+            AddIndex<Vendor>(modelBuilder, x => new { x.Name, x.Longitude, x.Latitude }, false);
 
             modelBuilder.Entity<Vendor>().HasQueryFilter(x => x.DeletedAt == null);
 

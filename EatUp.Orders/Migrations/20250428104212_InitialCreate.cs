@@ -34,14 +34,14 @@ namespace EatUp.Orders.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_FoodPackageTitle_UserName_PaymentStatus_PaymentId",
                 table: "Orders",
-                columns: new[] { "FoodPackageTitle", "UserName", "PaymentStatus", "PaymentId" },
+                columns: new[] { "FoodPackageTitle", "FoodPackageId", "UserName", "PaymentStatus", "PaymentId" },
                 unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_UserId",
                 table: "Orders",
                 column: "UserId",
-                unique: true);
+                unique: false);
         }
 
         /// <inheritdoc />

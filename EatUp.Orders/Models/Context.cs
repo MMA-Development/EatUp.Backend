@@ -40,13 +40,14 @@ namespace EatUp.Orders.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //Id is already Index, since it is a primary key in BaseEntity
-            AddIndex<Order>(modelBuilder, x => x.UserId);
+            AddIndex<Order>(modelBuilder, x => x.UserId, false);
             AddIndex<Order>(modelBuilder, x => new
             {
                 x.FoodPackageTitle,
                 x.UserName,
                 x.PaymentStatus,
-                x.PaymentId
+                x.PaymentId,
+                x.FoodPackageId
             });
 
             modelBuilder.Entity<Order>().HasQueryFilter(x => x.DeletedAt == null);
