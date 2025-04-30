@@ -22,7 +22,7 @@ namespace EatUp.microservice.tst
                 LastAvailablePickup = DateTime.UtcNow.AddHours(-1)
             };
 
-            var mealService = new MealService(new Mock<IBaseRepository<Meal>>().Object);
+            var mealService = new MealService(new Mock<IRepository<Meal>>().Object);
 
             // Act
             Action act = () => mealService.EnsureMeal(meal);
@@ -40,7 +40,7 @@ namespace EatUp.microservice.tst
                 LastAvailablePickup = DateTime.UtcNow.AddHours(1)
             };
 
-            var mealService = new MealService(new Mock<IBaseRepository<Meal>>().Object);
+            var mealService = new MealService(new Mock<IRepository<Meal>>().Object);
 
             // Act
             Action act = () => mealService.EnsureMeal(meal);

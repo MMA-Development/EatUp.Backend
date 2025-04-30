@@ -1,4 +1,5 @@
-﻿using EatUp.Meals.Models;
+﻿using EatUp.Meals.DTO;
+using EatUp.Meals.Models;
 using EatUp.Meals.Services;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +11,12 @@ namespace EatUp.Meals.Controllers
     public class MealsController(IMealService mealService): ControllerBase
     {
 
-        [HttpPost]
-        public IActionResult AddMeal([FromBody] Meal meal)
+        [HttpPost("{vendorId:guid}")]
+        public async Task<IActionResult> AddMeal([FromRoute] Guid vendorId, [FromBody] AddMealDTO meal)
         {
             try
             {
-                mealService.AddMeal(meal);
-                return Ok();
+                return Ok(await mealService.AddMeal(vendorId, meal));
             }
             catch (ArgumentException ex)
             {

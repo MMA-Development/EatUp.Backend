@@ -3,7 +3,7 @@ using EatUp.Meals.Models;
 
 namespace EatUp.Meals.Repositories
 {
-    public interface IBaseRepository<TEntity> where TEntity : BaseEntity
+    public interface IRepository<TEntity> where TEntity : BaseEntity
     {
         Task<PaginationResult<TEntity>> GetPage(int skip, int take, Expression<Func<TEntity, bool>>? filter = null, bool tracking = false);
         Task UpdateAll(Expression<Func<TEntity, bool>> query, Action<TEntity> action);

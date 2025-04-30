@@ -1,15 +1,18 @@
-﻿using EatUp.Meals.Models;
+﻿using EatUp.Meals.DTO;
+using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
 
 namespace EatUp.Meals.Services
 {
-    public class MealService(IBaseRepository<Meal> repository) : IMealService
+    public class MealService(IRepository<Meal> repository) : IMealService
     {
-        public void AddMeal(Meal meal)
+        public async Task<Guid> AddMeal(Guid vendorId, AddMealDTO addMealDTO)
         {
+            Meal meal = addMealDTO.ToMeal(vendorId);
             EnsureMeal(meal);
-            repository.Insert(meal);
-            repository.Save();
+            await repository.Insert(meal);
+            await repository.Save();
+            return meal.Id;
         }
 
         public async Task<PaginationResult<Meal>> GetPage(int skip, int take)

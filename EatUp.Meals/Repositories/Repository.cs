@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EatUp.Meals.Repositories
 {
-    public class Repository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
         private readonly Context _context;
         public Repository(Context context)
