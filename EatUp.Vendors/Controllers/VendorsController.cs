@@ -74,7 +74,21 @@ namespace EatUp.Vendors.Controllers
             {
                 return BadRequest(ex.Message);
             }
-        }   
+        }
+
+        [HttpPost("token")]
+        public async Task<IActionResult> GetToken([FromBody] string refreshToken)
+        {
+            try
+            {
+                VendorTokens token = await vendorService.RefreshToken(refreshToken);
+                return Ok(token);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
         [HttpDelete]
         public async Task<IActionResult> Delete(Guid id)

@@ -6,13 +6,14 @@ using EatUp.Vendors.DTO;
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Stripe;
 
 namespace EatUp.Vendors.Services
 {
-    public class Vendorservice(IRepository<Vendor> repository, IConfiguration configuration) : IVendorservice
+    public class Vendorservice(IRepository<Vendor> vendorRepository, IRepository<RefreshTokenInformation> refreshTokenRepository, IConfiguration configuration) : IVendorservice
     {
 
         public async Task<AccountLink> AddVendor(AddVendorDTO addVendor)
@@ -26,8 +27,8 @@ namespace EatUp.Vendors.Services
             Vendor vendor = addVendor.ToVendor();
             vendor.StripeAccountId = stripeAccountId;
 
-            await repository.Insert(vendor);
-            await repository.Save();
+            await vendorRepository.Insert(vendor);
+            await vendorRepository.Save();
 
             return accountLink;
         }
@@ -69,23 +70,23 @@ namespace EatUp.Vendors.Services
 
         private async Task<bool> UsernameIsTaken(string username)
         {
-            return await repository.Exist(x => x.Username == username);
+            return await vendorRepository.Exist(x => x.Username == username);
         }
 
         public async Task<PaginationResult<Vendor>> GetPage(int skip, int take)
         {
-            return await repository.GetPage(skip, take, null, false);
+            return await vendorRepository.GetPage(skip, take, null, false);
         }
 
         public async Task Delete(Guid id)
         {
-            await repository.Delete(id);
-            await repository.Save();
+            await vendorRepository.Delete(id);
+            await vendorRepository.Save();
         }
 
         public async Task<VendorTokens> SignIn(SignInVendorDTO signInVendor)
         {
-            var user = await repository.GetByExpression(x => x.Username == signInVendor.Username);
+            var user = await vendorRepository.GetByExpression(x => x.Username == signInVendor.Username);
             if (user == null)
                 throw new ArgumentException("User not found");
 
@@ -96,7 +97,9 @@ namespace EatUp.Vendors.Services
 
             var accessToken = GenerateAccessToken(user.Id.ToString(), user.Username, configuration["JWT:Secret"]);
             var refreshToken = GenerateRefreshToken();
+            await SaveRefreshToken(user.Id, user.Username, refreshToken, accessToken);
 
+            await refreshTokenRepository.Save();
             return new VendorTokens
             {
                 RefreshToken = refreshToken,
@@ -143,21 +146,55 @@ namespace EatUp.Vendors.Services
 
         public async Task UpdateVendor(UpdateVendorDTO vendorDTO, Guid vendorId)
         {
-            var vendorFromDb = await repository.GetById(vendorId, true); ;
+            var vendorFromDb = await vendorRepository.GetById(vendorId, true); ;
             if (vendorFromDb == null)
                 throw new ArgumentException("Vendor not found");
 
             vendorDTO.Merge(vendorFromDb);
-            await repository.Save();
+            await vendorRepository.Save();
         }
 
         public async Task<VendorDTO> GetVendorById(Guid vendorId)
         {
-            var vendor = await repository.GetById(vendorId);
+            var vendor = await vendorRepository.GetById(vendorId);
             if (vendor == null)
                 throw new ArgumentException("Vendor not found");
 
             return VendorDTO.FromVendor(vendor);
+        }
+
+        public async Task<VendorTokens> RefreshToken(string refreshToken)
+        {
+            var tokenFromDb = await refreshTokenRepository.GetByExpression(x => x.RefreshToken == refreshToken, true, x => x.Vendor);
+            if (tokenFromDb == null)
+            {
+                throw new Exception("refreshtoken is invalid");
+            }
+
+            await refreshTokenRepository.Delete(tokenFromDb.Id);
+
+            var newRefreshToken = GenerateRefreshToken();
+            var accessToken = GenerateAccessToken(tokenFromDb.VendorId.ToString(), tokenFromDb.Vendor.Username, configuration["JWT:Secret"]);
+
+            await SaveRefreshToken(tokenFromDb.VendorId, tokenFromDb.Vendor.Username, newRefreshToken, accessToken);
+
+            await refreshTokenRepository.Save();
+            return new VendorTokens
+            {
+                AccessToken = accessToken,
+                RefreshToken = newRefreshToken,
+            };
+        }
+
+        private async Task SaveRefreshToken(Guid vendorId, string username, string refreshToken, string accessToken)
+        {
+            var token = new RefreshTokenInformation
+            {
+                ExpirationDate = DateTime.UtcNow.AddDays(30),
+                RefreshToken = refreshToken,
+                VendorId = vendorId,
+            };
+            await refreshTokenRepository.Insert(token);
         }
     }
 }

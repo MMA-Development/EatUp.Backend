@@ -46,6 +46,7 @@ namespace EatUp.Vendors.Models
             AddIndex<Vendor>(modelBuilder, x => new { x.Name, x.Longitude, x.Latitude }, false);
 
             modelBuilder.Entity<Vendor>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<RefreshTokenInformation>().HasQueryFilter(x => x.DeletedAt == null || x.ExpirationDate < DateTime.Now);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -1,4 +1,6 @@
-﻿namespace EatUp.Vendors.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EatUp.Vendors.Models
 {
     public class Vendor: BaseEntity
     {
@@ -11,5 +13,8 @@
         public double Longitude { get; set; }
         public double Latitude { get; set; }
         public string StripeAccountId { get; set; } = null!;
+
+        [ForeignKey("VendorId")]
+        public virtual List<RefreshTokenInformation> RefreshTokens { get; set; }
     }
 }

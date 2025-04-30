@@ -12,5 +12,6 @@ namespace EatUp.Vendors.Services
         Task<PaginationResult<Vendor>> GetPage(int skip, int take);
         Task UpdateVendor(UpdateVendorDTO vendorDTO, Guid vendorId);
         Task<VendorDTO> GetVendorById(Guid vendorId);
+        Task<VendorTokens> RefreshToken(string refreshToken);
     }
 }
