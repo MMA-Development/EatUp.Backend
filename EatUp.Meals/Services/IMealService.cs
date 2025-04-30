@@ -9,5 +9,6 @@ namespace EatUp.Meals.Services
         Task Delete(Guid mealId, Guid vendorId);
         void EnsureMeal(Meal meal);
         Task<PaginationResult<MealDTO>> GetPage(MealSearchParamsDTO mealSearchParams);
+        Task UpdateMeal(Guid mealId, Guid vendorId, UpdateMealDTO meal);
     }
 }

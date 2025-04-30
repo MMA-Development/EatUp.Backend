@@ -31,6 +31,20 @@ namespace EatUp.Meals.Controllers
             return Ok(meals);
         }
 
+        [HttpPut("{mealId:guid}")]
+        public async Task<IActionResult> UpdateMeal([FromRoute] Guid mealId, [FromQuery] Guid vendorId, [FromBody] UpdateMealDTO meal)
+        {
+            try
+            {
+                await mealService.UpdateMeal(mealId, vendorId, meal);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpDelete("{mealId:guid}")]
         public async Task<IActionResult> Delete(Guid vendorId, Guid mealId)
         {
