@@ -56,9 +56,13 @@ namespace EatUp.Meals.Services
             }
         }
 
-        public async Task Delete(Guid id)
+        public async Task Delete(Guid mealId, Guid vendorId)
         {
-            await repository.Delete(id);
+            var meal = await repository.GetById(mealId);
+            if(meal.VendorId != vendorId)
+                throw new Exception("Could not delete meal. Meal does not belong to vendor.");
+
+            await repository.Delete(mealId);
             await repository.Save();
         }
     }

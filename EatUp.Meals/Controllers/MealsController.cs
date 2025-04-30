@@ -31,15 +31,15 @@ namespace EatUp.Meals.Controllers
             return Ok(meals);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete("{mealId:guid}")]
+        public async Task<IActionResult> Delete(Guid vendorId, Guid mealId)
         {
             try
             {
-                await mealService.Delete(id);
+                await mealService.Delete(mealId, vendorId);
                 return Ok();
             }
-            catch (ArgumentException ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }
