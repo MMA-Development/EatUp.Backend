@@ -1,12 +1,15 @@
-﻿using EatUp.Users.Models;
+﻿using EatUp.Users.DTO;
 
 namespace EatUp.Users.Services
 {
     public interface IUserService
     {
-        void AddUser(User meal);
+        Task AddUser(AddUserDTO adduser);
         Task Delete(Guid id);
-        void EnsureMeal(User meal);
-        Task<PaginationResult<User>> GetPage(int skip, int take);
+        Task<UserDTO> GetUserById(Guid vendorId);
+        Task<UserTokens> RefreshToken(string refreshToken);
+        Task<UserTokens> SignIn(SignInUserDTO singInUser);
+        Task SignOut(string refreshToken);
+        Task UpdateUser(UpdateUserDTO vendorDTO, Guid vendorId);
     }
 }

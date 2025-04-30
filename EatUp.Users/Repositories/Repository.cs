@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EatUp.Users.Repositories
 {
-    public class Repository<TEntity> : IBaseRepository<TEntity> where TEntity : BaseEntity
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
         private readonly Context _context;
         public Repository(Context context)
@@ -50,10 +50,10 @@ namespace EatUp.Users.Repositories
             _context.Remove(entity);
             return Task.CompletedTask;
         }
-        
+
         public Task Save()
         {
-             _context.SaveChanges();
+            _context.SaveChanges();
             return Task.CompletedTask;
         }
 
@@ -66,6 +66,16 @@ namespace EatUp.Users.Repositories
             }
 
             return Task.CompletedTask;
+        }
+
+        public Task<bool> Exist(Expression<Func<TEntity, bool>> query)
+        {
+            return Task.FromResult(_context.Set<TEntity>().Any(query));
+        }
+
+        public async Task<TEntity?> GetByExpression(Expression<Func<TEntity, bool>> query, bool tracking = false, params Expression<Func<TEntity, object>>[] includes)
+        {
+            return await _context.GetQuery(tracking, includes).FirstOrDefaultAsync(query);
         }
     }
 }

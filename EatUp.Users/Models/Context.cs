@@ -45,6 +45,7 @@ namespace EatUp.Users.Models
             AddIndex<User>(modelBuilder, x => x.StripeCustomerId, false);
 
             modelBuilder.Entity<User>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<RefreshTokenInformation>().HasQueryFilter(x => x.DeletedAt == null || x.ExpirationDate < DateTime.Now);
 
             base.OnModelCreating(modelBuilder);
         }
