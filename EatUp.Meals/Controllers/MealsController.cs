@@ -25,9 +25,9 @@ namespace EatUp.Meals.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPage(int skip = 0, int take = 10)
+        public async Task<IActionResult> GetPage([FromQuery] MealSearchParamsDTO mealSearchParams)
         {
-            var meals = await mealService.GetPage(skip, take);
+            var meals = await mealService.GetPage(mealSearchParams);
             return Ok(meals);
         }
 

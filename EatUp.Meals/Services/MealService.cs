@@ -1,6 +1,9 @@
-﻿using EatUp.Meals.DTO;
+﻿using System.Linq.Expressions;
+using EatUp.Meals.DTO;
+using EatUp.Meals.Extensions;
 using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace EatUp.Meals.Services
 {
@@ -15,9 +18,34 @@ namespace EatUp.Meals.Services
             return meal.Id;
         }
 
-        public async Task<PaginationResult<Meal>> GetPage(int skip, int take)
+        public async Task<PaginationResult<MealDTO>> GetPage(MealSearchParamsDTO mealSearchParams)
         {
-            return await repository.GetPage(skip, take, null, false);
+            var filter = BuildPaginationFilter(mealSearchParams);
+            var mealsPage = await repository.GetPage(mealSearchParams.Skip, mealSearchParams.Take, MealDTO.FromMeal, filter, false, mealSearchParams.SortBy, mealSearchParams.Ascending);
+
+            return mealsPage;
+        }
+
+        private Expression<Func<Meal, bool>> BuildPaginationFilter(MealSearchParamsDTO mealSearchParams)
+        {
+            var filters = new List<Expression<Func<Meal, bool>>>();
+
+            if (mealSearchParams.VendorId != null)
+            {
+                filters.Add(m => m.VendorId == mealSearchParams.VendorId);
+            }
+
+            if (mealSearchParams.Search != null)
+            {
+                filters.Add(m => m.Title.Contains(mealSearchParams.Search) || m.Description.Contains(mealSearchParams.Search));
+            }
+
+            if (mealSearchParams.Categories != null)
+            {
+                filters.Add(m => m.Categories.Any(c => mealSearchParams.Categories.Contains(c.Id)));
+            }
+
+            return filters.AndAll();
         }
 
         public void EnsureMeal(Meal meal)

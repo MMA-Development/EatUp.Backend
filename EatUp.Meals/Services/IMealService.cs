@@ -8,6 +8,6 @@ namespace EatUp.Meals.Services
         Task<Guid> AddMeal(Guid vendorId, AddMealDTO meal);
         Task Delete(Guid id);
         void EnsureMeal(Meal meal);
-        Task<PaginationResult<Meal>> GetPage(int skip, int take);
+        Task<PaginationResult<MealDTO>> GetPage(MealSearchParamsDTO mealSearchParams);
     }
 }
