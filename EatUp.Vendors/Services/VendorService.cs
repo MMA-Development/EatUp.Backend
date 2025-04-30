@@ -196,5 +196,16 @@ namespace EatUp.Vendors.Services
             };
             await refreshTokenRepository.Insert(token);
         }
+
+        public async Task SignOut(string refreshToken)
+        {
+            var tokenFromDb = await refreshTokenRepository.GetByExpression(x => x.RefreshToken == refreshToken, true);
+            if (tokenFromDb == null)
+            {
+                throw new Exception("refreshtoken is invalid");
+            }
+            await refreshTokenRepository.Delete(tokenFromDb.Id);
+            await refreshTokenRepository.Save();
+        }
     }
 }

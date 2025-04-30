@@ -40,6 +40,20 @@ namespace EatUp.Vendors.Controllers
             }
         }
 
+        [HttpPost("signout")]
+        public async Task<IActionResult> SignOut([FromBody] string refreshToken)
+        {
+            try
+            {
+                await vendorService.SignOut(refreshToken);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpPut("{vendorId:guid}")]
         public async Task<IActionResult> UpdateVendor([FromBody] UpdateVendorDTO vendorDTO, [FromRoute] Guid vendorId)
         {
@@ -90,12 +104,12 @@ namespace EatUp.Vendors.Controllers
             }
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete("{vendorId:guid}")]
+        public async Task<IActionResult> Delete(Guid vendorId)
         {
             try
             {
-                await vendorService.Delete(id);
+                await vendorService.Delete(vendorId);
                 return Ok();
             }
             catch (ArgumentException ex)
