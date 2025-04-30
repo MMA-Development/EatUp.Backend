@@ -21,6 +21,8 @@ app.UseHttpsRedirection();
 
 app.MapReverseProxy();
 
+app.UseCors((x) => x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+
 app.Run();
 
 internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
