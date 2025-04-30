@@ -76,5 +76,10 @@ namespace EatUp.Meals.Services
             await repository.Save();
         }
 
+        public async Task<MealDTO> GetMeal(Guid mealId)
+        {
+            var meal = await repository.GetById(mealId, MealDTO.FromMeal);
+            return meal;
+        }
     }
 }

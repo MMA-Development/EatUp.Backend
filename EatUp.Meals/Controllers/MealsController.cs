@@ -45,6 +45,19 @@ namespace EatUp.Meals.Controllers
             }
         }
 
+        [HttpGet("{mealId:guid}")]
+        public async Task<IActionResult> GetMeal([FromRoute] Guid mealId)
+        {
+            try
+            {
+                return Ok(await mealService.GetMeal(mealId));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpDelete("{mealId:guid}")]
         public async Task<IActionResult> Delete(Guid vendorId, Guid mealId)
         {

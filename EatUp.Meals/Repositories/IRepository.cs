@@ -11,5 +11,6 @@ namespace EatUp.Meals.Repositories
         Task Save();
         Task<IQueryable<TEntity>> GetQuery(bool tracking = false, params Expression<Func<TEntity, object>>[] includes);
         Task<PaginationResult<TTo>> GetPage<TTo>(int skip, int take, Expression<Func<TEntity, TTo>> mapper, Expression<Func<TEntity, bool>>? filter = null, bool tracking = false, string? orderBy = null, bool ascending = false);
+        Task<TTo?> GetById<TTo>(Guid id, Expression<Func<TEntity, TTo>> mapper, bool tracking = false, params Expression<Func<TEntity, object>>[] includes);
     }
 }
