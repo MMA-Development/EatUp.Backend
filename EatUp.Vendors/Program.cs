@@ -3,8 +3,10 @@ using EatUp.Vendors.Models;
 using EatUp.Vendors.Repositories;
 using EatUp.Vendors.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
 using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -55,6 +57,36 @@ builder.Services.AddAuthorization(options =>
     {
         policy.AuthenticationSchemes.Add("UserScheme");
         policy.RequireAuthenticatedUser();
+    });
+});
+
+builder.Services.Configure<AuthorizationOptions>(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes("VendorScheme", "UserScheme")
+        .RequireAuthenticatedUser()
+        .Build();
+});
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your valid token.",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            new string[] {}
+        }
     });
 });
 

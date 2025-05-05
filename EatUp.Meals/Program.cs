@@ -3,7 +3,9 @@ using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
 using EatUp.Meals.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +43,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero,
             IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
         };
-    }).AddJwtBearer();
+    });
 
 builder.Services.AddAuthorization(options =>
 {
@@ -54,6 +56,40 @@ builder.Services.AddAuthorization(options =>
     {
         policy.AuthenticationSchemes.Add("UserScheme");
         policy.RequireAuthenticatedUser();
+    });
+    options.AddPolicy("default", policy =>
+    {
+        policy.AddAuthenticationSchemes("UserScheme", "PolicyScheme");
+        policy.RequireAuthenticatedUser();
+    });
+});
+builder.Services.Configure<AuthorizationOptions>(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder()
+        .AddAuthenticationSchemes("VendorScheme", "UserScheme")
+        .RequireAuthenticatedUser()
+        .Build();
+});
+builder.Services.AddSwaggerGen(c =>
+{
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Enter 'Bearer' [space] and then your valid token.",
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+            },
+            new string[] {}
+        }
     });
 });
 // Add services to the container.

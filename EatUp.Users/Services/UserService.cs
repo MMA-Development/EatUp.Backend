@@ -46,7 +46,7 @@ namespace EatUp.Users.Services
                 throw new ArgumentException("User not found");
             }
 
-            var accessToken = GenerateAccessToken(user.Id.ToString(), user.Username, configuration["UserJwt:Secret"], configuration["UserJwt:Issuer"]);
+            var accessToken = GenerateAccessToken(user.Id.ToString(), user.Username, configuration["UserJwt:Secret"], configuration["UserJwt:Issuer"], configuration["UserJwt:Audience"]);
             var refreshToken = GenerateRefreshToken();
             await SaveRefreshToken(user.Id, user.Username, refreshToken);
 
@@ -75,7 +75,7 @@ namespace EatUp.Users.Services
             return Convert.ToBase64String(randomBytes);
         }
 
-        private string GenerateAccessToken(string userId, string username, string secretKey, string issuer)
+        private string GenerateAccessToken(string userId, string username, string secretKey, string issuer, string audience)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(secretKey);
@@ -90,7 +90,8 @@ namespace EatUp.Users.Services
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(15),
                 Issuer = issuer,
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                Audience = audience,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -127,7 +128,7 @@ namespace EatUp.Users.Services
             await refreshTokenRepository.Delete(tokenFromDb.Id);
 
             var newRefreshToken = GenerateRefreshToken();
-            var accessToken = GenerateAccessToken(tokenFromDb.UserId.ToString(), tokenFromDb.User.Username, configuration["JWT:Secret"], configuration["UserJwt:Issuer"]);
+            var accessToken = GenerateAccessToken(tokenFromDb.UserId.ToString(), tokenFromDb.User.Username, configuration["JWT:Secret"], configuration["UserJwt:Issuer"], configuration["UserJwt:Audience"]);
 
             await SaveRefreshToken(tokenFromDb.UserId, tokenFromDb.User.Username, newRefreshToken);
 
