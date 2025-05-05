@@ -7,15 +7,15 @@ namespace EatUp.Orders.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OrdersController(IOrderService mealService): ControllerBase
+    public class OrdersController(IOrderService orderService): ControllerBase
     {
 
         [HttpPost]
-        public IActionResult AddMeal([FromBody] Order meal)
+        public IActionResult AddMeal([FromBody] Order order)
         {
             try
             {
-                mealService.AddMeal(meal);
+                orderService.AddOrder(order);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -27,7 +27,7 @@ namespace EatUp.Orders.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPage(int skip = 0, int take = 10)
         {
-            var meals = await mealService.GetPage(skip, take);
+            var meals = await orderService.GetPage(skip, take);
             return Ok(meals);
         }
 
@@ -36,7 +36,7 @@ namespace EatUp.Orders.Controllers
         {
             try
             {
-                await mealService.Delete(id);
+                await orderService.Delete(id);
                 return Ok();
             }
             catch (ArgumentException ex)

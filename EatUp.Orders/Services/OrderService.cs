@@ -5,7 +5,7 @@ namespace EatUp.Orders.Services
 {
     public class OrderService(IBaseRepository<Order> repository) : IOrderService
     {
-        public void AddMeal(Order meal)
+        public void AddOrder(Order meal)
         {
             EnsureOrder(meal);
             repository.Insert(meal);

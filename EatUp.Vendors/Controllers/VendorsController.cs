@@ -54,6 +54,7 @@ namespace EatUp.Vendors.Controllers
             }
         }
 
+        [Authorize(Policy = "Vendor")]
         [HttpPut("{vendorId:guid}")]
         public async Task<IActionResult> UpdateVendor([FromBody] UpdateVendorDTO vendorDTO, [FromRoute] Guid vendorId)
         {

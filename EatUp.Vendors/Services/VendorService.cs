@@ -95,7 +95,7 @@ namespace EatUp.Vendors.Services
                 throw new ArgumentException("User not found");
             }
 
-            var accessToken = GenerateAccessToken(user.Id.ToString(), user.Username, configuration["JWT:Secret"]);
+            var accessToken = GenerateAccessToken(user.Id.ToString(), user.Username, configuration["VendorJwt:Secret"], configuration["VendorJwt:Issuer"]);
             var refreshToken = GenerateRefreshToken();
             await SaveRefreshToken(user.Id, user.Username, refreshToken, accessToken);
 
@@ -124,7 +124,7 @@ namespace EatUp.Vendors.Services
             return Convert.ToBase64String(randomBytes);
         }
 
-        private string GenerateAccessToken(string userId, string username, string secretKey)
+        private string GenerateAccessToken(string userId, string username, string secretKey, string issuer)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(secretKey);
@@ -138,7 +138,8 @@ namespace EatUp.Vendors.Services
                     new Claim(ClaimTypes.Role, "Vendor"),
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(15),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
+                Issuer = issuer,
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -175,7 +176,7 @@ namespace EatUp.Vendors.Services
             await refreshTokenRepository.Delete(tokenFromDb.Id);
 
             var newRefreshToken = GenerateRefreshToken();
-            var accessToken = GenerateAccessToken(tokenFromDb.VendorId.ToString(), tokenFromDb.Vendor.Username, configuration["JWT:Secret"]);
+            var accessToken = GenerateAccessToken(tokenFromDb.VendorId.ToString(), tokenFromDb.Vendor.Username, configuration["VendorJwt:Secret"], configuration["VendorJwt:Issuer"]);
 
             await SaveRefreshToken(tokenFromDb.VendorId, tokenFromDb.Vendor.Username, newRefreshToken, accessToken);
 

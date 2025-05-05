@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /EatUp.Vendors/appsettings.Development.json
 /EatUp.Users/appsettings.Development.json
+/EatUp.Orders/appsettings.Development.json
+/EatUp.Meals/appsettings.Development.json

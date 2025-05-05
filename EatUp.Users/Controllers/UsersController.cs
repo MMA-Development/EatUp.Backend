@@ -53,6 +53,7 @@ namespace EatUp.Users.Controllers
         }
 
         [HttpPut("{userId:guid}")]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> UpdateVendor([FromBody] UpdateUserDTO userDTO, [FromRoute] Guid userId)
         {
             try
@@ -67,7 +68,8 @@ namespace EatUp.Users.Controllers
         }
 
         [HttpGet("{userId:guid}")]
-        public async Task<IActionResult> GetVendor([FromRoute] Guid userId)
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> GetUser([FromRoute] Guid userId)
         {
             try
             {
@@ -95,6 +97,7 @@ namespace EatUp.Users.Controllers
         }
 
         [HttpDelete("{userId:guid}")]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> Delete(Guid userId)
         {
             try

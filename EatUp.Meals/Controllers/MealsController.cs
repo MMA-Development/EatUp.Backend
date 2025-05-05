@@ -1,16 +1,18 @@
 ﻿using EatUp.Meals.DTO;
 using EatUp.Meals.Models;
 using EatUp.Meals.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EatUp.Meals.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("[controller]")]
-    public class MealsController(IMealService mealService): ControllerBase
+    public class MealsController(IMealService mealService) : ControllerBase
     {
-
+        [Authorize(Policy = "Vendor")]
         [HttpPost("{vendorId:guid}")]
         public async Task<IActionResult> AddMeal([FromRoute] Guid vendorId, [FromBody] AddMealDTO meal)
         {
@@ -27,11 +29,19 @@ namespace EatUp.Meals.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPage([FromQuery] MealSearchParamsDTO mealSearchParams)
         {
-            var meals = await mealService.GetPage(mealSearchParams);
-            return Ok(meals);
+            try
+            {
+                var meals = await mealService.GetPage(mealSearchParams);
+                return Ok(meals);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpPut("{mealId:guid}")]
+        [Authorize(Policy = "Vendor")]
         public async Task<IActionResult> UpdateMeal([FromRoute] Guid mealId, [FromQuery] Guid vendorId, [FromBody] UpdateMealDTO meal)
         {
             try
@@ -59,6 +69,7 @@ namespace EatUp.Meals.Controllers
         }
 
         [HttpDelete("{mealId:guid}")]
+        [Authorize(Policy = "Vendor")]
         public async Task<IActionResult> Delete(Guid vendorId, Guid mealId)
         {
             try
