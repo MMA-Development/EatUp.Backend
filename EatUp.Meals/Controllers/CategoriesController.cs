@@ -1,4 +1,5 @@
-﻿using EatUp.Meals.Services;
+﻿using EatUp.Meals.DTO;
+using EatUp.Meals.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,6 +20,21 @@ namespace EatUp.Meals.Controllers
                 return Ok(categories);
             }
             catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost]
+        [Authorize(Policy = "Vendor")]
+        public async Task<IActionResult> AddCategory([FromBody] AddCategoryDTO addCategoryDTO)
+        {
+            try
+            {
+                var categoryId = await categoryService.Create(addCategoryDTO);
+                return CreatedAtAction(nameof(GetCategories), new { id = categoryId }, null);
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }

@@ -5,6 +5,7 @@ namespace EatUp.Meals.DTO
 {
     public class MealDTO
     {
+        public Guid Id { get; set; }
         public Guid VendorId { get; set; }
         public string VendorName { get; set; } = null!;
         public string Title { get; set; } = null!;
@@ -19,6 +20,7 @@ namespace EatUp.Meals.DTO
 
         public static Expression<Func<Meal, MealDTO>> FromMeal = (meal) => new MealDTO
         {
+            Id = meal.Id,
             VendorId = meal.VendorId,
             VendorName = meal.VendorName,
             Title = meal.Title,
