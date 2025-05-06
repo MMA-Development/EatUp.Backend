@@ -29,7 +29,7 @@ jobs:
 
     - name: Build and Push Docker image to GHCR
       run: |
-        IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/eatup-gateway:latest
+        IMAGE_NAME=ghcr.io/mma-development/eatup-gateway:latest
         docker build -f EatUp.Gateway/Dockerfile -t $IMAGE_NAME .
         docker push $IMAGE_NAME
 
