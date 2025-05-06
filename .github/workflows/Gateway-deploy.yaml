@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_deploy:
+  build:
     permissions: write-all
 
     runs-on: ubuntu-latest
@@ -35,22 +35,25 @@ jobs:
         docker build -f EatUp.Gateway/Dockerfile -t $IMAGE_NAME .
         docker push $IMAGE_NAME
 
-    # - name: Log in to Azure
-    #   uses: azure/login@v1
-    #   with:
-    #     creds: ${{ secrets.AZURE_CREDENTIALS }}
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    # - name: Deploy to Azure Container Apps
-    #   uses: azure/container-apps-deploy-action@v1
-    #   with:
-    #     resourceGroup: my-resource-group
-    #     containerAppName: my-container-app
-    #     containerAppEnvironment: my-container-app-environment
-    #     imageToDeploy: ghcr.io/${{ github.repository_owner }}/myapp:latest
-    #     registryUrl: ghcr.io
-    #     registryUsername: ${{ github.actor }}
-    #     registryPassword: ${{ secrets.GITHUB_TOKEN }}
-    #     environmentVariables: |
-    #       ${{
-    #         format('APP_SETTINGS={0}', secrets.APP_SETTINGS)
-    #       }}
+    - name: Deploy to Azure Container Apps
+      uses: azure/container-apps-deploy-action@v1
+      with:
+        resourceGroup: EatUp
+        containerAppName: gateway
+        containerAppEnvironment: EatUp
+        imageToDeploy: ghcr.io/mma-development/eatup-gateway:latest
+        registryUrl: ghcr.io
+        registryUsername: ${{ github.actor }}
+        registryPassword: ${{ secrets.GITHUB_TOKEN }}
+        environmentVariables: |
+          ${{
+            format('APP_SETTINGS={0}', secrets.GATEWAY_APP_SETTINGS)
+          }}

@@ -101,7 +101,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddTransient<IRepository<Meal>, Repository<Meal>>();
+builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
 builder.Services.AddTransient<IMealService, MealService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 var app = builder.Build();
 
