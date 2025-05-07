@@ -55,8 +55,8 @@ namespace EatUp.Vendors.Controllers
         }
 
         [Authorize(Policy = "Vendor")]
-        [HttpPut("{vendorId:guid}")]
-        public async Task<IActionResult> UpdateVendor([FromBody] UpdateVendorDTO vendorDTO, [FromRoute] Guid vendorId)
+        [HttpPut("me")]
+        public async Task<IActionResult> UpdateVendor([FromBody] UpdateVendorDTO vendorDTO, [FromHeader] Guid vendorId)
         {
             try
             {
@@ -78,7 +78,23 @@ namespace EatUp.Vendors.Controllers
         }
 
         [HttpGet("{vendorId:guid}")]
+        [AllowAnonymous]
         public async Task<IActionResult> GetVendor([FromRoute] Guid vendorId)
+        {
+            try
+            {
+                VendorDTO vendor = await vendorService.GetVendorById(vendorId);
+                return Ok(vendor);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMe([FromHeader] Guid vendorId)
         {
             try
             {
@@ -105,8 +121,8 @@ namespace EatUp.Vendors.Controllers
             }
         }
 
-        [HttpDelete("{vendorId:guid}")]
-        public async Task<IActionResult> Delete(Guid vendorId)
+        [HttpDelete("me")]
+        public async Task<IActionResult> Delete([FromHeader] Guid vendorId)
         {
             try
             {
