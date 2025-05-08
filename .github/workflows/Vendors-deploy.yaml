@@ -36,6 +36,7 @@ jobs:
         docker push $IMAGE_NAME
 
   deploy:
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
     - name: Log in to Azure
@@ -53,7 +54,4 @@ jobs:
         registryUrl: ghcr.io
         registryUsername: ${{ github.actor }}
         registryPassword: ${{ secrets.GITHUB_TOKEN }}
-        environmentVariables: |
-          ${{
-            format('APP_SETTINGS={0}', secrets.VENDORS_APP_SETTINGS)
-          }}
+        environmentVariables: ${{ secrets.VENDORS_APP_SETTINGS }}}}
