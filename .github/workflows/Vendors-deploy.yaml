@@ -53,7 +53,7 @@ jobs:
         containerAppEnvironment: managedEnvironment-EatUp-a499
         imageToDeploy: ghcr.io/mma-development/eatup-vendors:latest
         registryUrl: ghcr.io
-        registryUsername: ${{ github.GHCR_USERNAME }}
+        registryUsername: ${{ secrets.GHCR_USERNAME }}
         registryPassword: ${{ secrets.GHCR_PAT }}
         environmentVariables: |
           ConnectionStrings__DefaultConnection="${{ secrets.VENDOR_DATABASE }}"
