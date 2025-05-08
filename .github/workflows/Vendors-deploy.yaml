@@ -39,26 +39,31 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     steps:
+    - name: Install Azure CLI
+      run: |
+        curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+        az extension add --name containerapp
+
     - name: Log in to Azure
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: Deploy to Azure Container Apps
-      uses: azure/container-apps-deploy-action@v2
-      with:
-        resourceGroup: EatUp
-        containerAppName: eatup-vendors
-        containerAppEnvironment: managedEnvironment-EatUp-a499
-        imageToDeploy: ghcr.io/mma-development/eatup-vendors:latest
-        registryUrl: ghcr.io
-        registryUsername: ${{ github.actor }}
-        registryPassword: ${{ secrets.GITHUB_TOKEN }}
-        environmentVariables: |
-            ConnectionStrings__DefaultConnection=${{ secrets.VENDOR_DATABASE }}
-            VendorJwt__Secret=${{ secrets.VENDORJWT__SECRET }}
-            VendorJwt__Issuer=${{ secrets.VENDORJWT__ISSUER }}
-            VendorJwt__Audience=${{ secrets.VENDORJWT__AUDIENCE }}
-            UserJwt__Secret=${{ secrets.USERJWT__SECRET }}
-            UserJwt__Issuer=${{ secrets.USERJWT__ISSUER }}
+    - name: Deploy to Azure Container Apps manually
+      run: |
+        az containerapp update \
+          --name eatup-vendors \
+          --resource-group EatUp \
+          --image ghcr.io/mma-development/eatup-vendors:latest \
+          --environment managedEnvironment-EatUp-a499 \
+          --registry-server ghcr.io \
+          --registry-username "${{ github.actor }}" \
+          --registry-password "${{ secrets.GITHUB_TOKEN }}" \
+          --set-env-vars \
+            ConnectionStrings__DefaultConnection=${{ secrets.VENDOR_DATABASE }} \
+            VendorJwt__Secret=${{ secrets.VENDORJWT__SECRET }} \
+            VendorJwt__Issuer=${{ secrets.VENDORJWT__ISSUER }} \
+            VendorJwt__Audience=${{ secrets.VENDORJWT__AUDIENCE }} \
+            UserJwt__Secret=${{ secrets.USERJWT__SECRET }} \
+            UserJwt__Issuer=${{ secrets.USERJWT__ISSUER }} \
             UserJwt__Audience=${{ secrets.USERJWT__AUDIENCE }}
