@@ -49,7 +49,7 @@ jobs:
       with:
         resourceGroup: EatUp
         containerAppName: eatup-vendors
-        containerAppEnvironment: managedEnvironment-EatUp-a499
+        environment: managedEnvironment-EatUp-a499
         imageToDeploy: ghcr.io/mma-development/eatup-vendors:latest
         registryUrl: ghcr.io
         registryUsername: ${{ github.actor }}
