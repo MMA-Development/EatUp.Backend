@@ -57,7 +57,7 @@ jobs:
         registryUsername: ${{ secrets.GHCR_USERNAME }}
         registryPassword: ${{ secrets.GHCR_PAT }}
         environmentVariables: |
-         "ReverseProxy__Clusters__vendors__Destinations__destination1__Address": "http://eatup-vendors.internal/",
-          "ReverseProxy__Clusters__users__Destinations__destination1__Address": "http://eatup-users.internal/",
-          "ReverseProxy__Clusters__orders__Destinations__destination1__Address": "http://eatup-orders.internal/",
-          "ReverseProxy__Clusters__meals__Destinations__destination1__Address": "http://eatup-meals.internal/"
+           ReverseProxy__Clusters__vendors__Destinations__destination1__Address=http://eatup-vendors.internal/
+           ReverseProxy__Clusters__users__Destinations__destination1__Address=http://eatup-users.internal/
+           ReverseProxy__Clusters__orders__Destinations__destination1__Address=http://eatup-orders.internal/
+           ReverseProxy__Clusters__meals__Destinations__destination1__Address=http://eatup-meals.internal/
