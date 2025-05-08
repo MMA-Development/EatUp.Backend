@@ -56,7 +56,7 @@ jobs:
         registryUsername: ${{ secrets.GHCR_USERNAME }}
         registryPassword: ${{ secrets.GHCR_PAT }}
         environmentVariables: |
-          ConnectionStrings__DefaultConnection="${{ secrets.VENDOR_DATABASE }}"
+          ConnectionStrings__DefaultConnection=${{ secrets.VENDOR_DATABASE }}
           VendorJwt__Secret=${{ secrets.VENDORJWT__SECRET }}
           VendorJwt__Issuer=${{ secrets.VENDORJWT__ISSUER }}
           VendorJwt__Audience=${{ secrets.VENDORJWT__AUDIENCE }}
