@@ -1,11 +1,11 @@
-name: Deploy Gateway to Azure Container Apps
+name: Deploy Meals to Azure Container Apps
 
 on:
   push:
     branches:
       - master
     paths:
-      - 'EatUp.Gateway/**'
+      - 'EatUp.Meals/**'
 
   workflow_dispatch:
 
@@ -31,8 +31,8 @@ jobs:
 
     - name: Build and Push Docker image to GHCR
       run: |
-        IMAGE_NAME=ghcr.io/mma-development/eatup-gateway:latest
-        docker build -f EatUp.Gateway/Dockerfile -t $IMAGE_NAME .
+        IMAGE_NAME=ghcr.io/mma-development/eatup-meals:latest
+        docker build -f EatUp.Meals/Dockerfile -t $IMAGE_NAME .
         docker push $IMAGE_NAME
 
   deploy:
@@ -47,13 +47,13 @@ jobs:
       uses: azure/container-apps-deploy-action@v1
       with:
         resourceGroup: EatUp
-        containerAppName: eatup-gateway
+        containerAppName: eatup-meals
         containerAppEnvironment: EatUp
-        imageToDeploy: ghcr.io/mma-development/eatup-gateway:latest
+        imageToDeploy: ghcr.io/mma-development/eatup-meals:latest
         registryUrl: ghcr.io
         registryUsername: ${{ github.actor }}
         registryPassword: ${{ secrets.GITHUB_TOKEN }}
         environmentVariables: |
           ${{
-            format('APP_SETTINGS={0}', secrets.GATEWAY_APP_SETTINGS)
+            format('APP_SETTINGS={0}', secrets.MEALS_APP_SETTINGS)
           }}
