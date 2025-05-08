@@ -51,14 +51,10 @@ jobs:
 
     - name: Deploy to Azure Container Apps manually
       run: |
-        az containerapp update \
+          az containerapp update \
           --name eatup-vendors \
           --resource-group EatUp \
           --image ghcr.io/mma-development/eatup-vendors:latest \
-          --environment managedEnvironment-EatUp-a499 \
-          --registry-server ghcr.io \
-          --registry-username "${{ github.actor }}" \
-          --registry-password "${{ secrets.GITHUB_TOKEN }}" \
           --set-env-vars \
             ConnectionStrings__DefaultConnection=${{ secrets.VENDOR_DATABASE }} \
             VendorJwt__Secret=${{ secrets.VENDORJWT__SECRET }} \
