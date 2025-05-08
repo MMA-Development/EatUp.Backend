@@ -57,7 +57,7 @@ jobs:
         environmentVariables: |
             ConnectionStrings__DefaultConnection=${{ secrets.VENDOR_DATABASE }}
             VendorJwt__Secret=${{secrets.VENDORJWT__SECRET}}
-            VendorJwt__Issuer=${{secrests.VENDORJWT__ISSUER}}}}
+            VendorJwt__Issuer=${{secrets.VENDORJWT__ISSUER}}}}
             VendorJwt__Audience=${{secrets.VENDORJWT__AUDIENCE}}
             UserJwt__Secret=${{secrets.USERJWT__SECRET}}
             UserJwt__Issuer=${{secrets.USERJWT__ISSUER}}
