@@ -54,4 +54,11 @@ jobs:
         registryUrl: ghcr.io
         registryUsername: ${{ github.actor }}
         registryPassword: ${{ secrets.GITHUB_TOKEN }}
-        environmentVariables: ${{ secrets.VENDORS_APP_SETTINGS }}}}
+        environmentVariables: |
+            ConnectionStrings__DefaultConnection=${{ secrets.VENDOR_DATABASE }}
+            VendorJwt__Secret=${{secrets.VENDORJWT__SECRET}}
+            VendorJwt__Issuer=${{secrests.VENDORJWT__ISSUER}}}}
+            VendorJwt__Audience=${{secrets.VENDORJWT__AUDIENCE}}
+            UserJwt__Secret=${{secrets.USERJWT__SECRET}}
+            UserJwt__Issuer=${{secrets.USERJWT__ISSUER}}
+            UserJwt__Audience=${{secrets.USERJWT__AUDIENCE}}
