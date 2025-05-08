@@ -45,11 +45,11 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Deploy to Azure Container Apps
-      uses: azure/container-apps-deploy-action@v1
+      uses: azure/container-apps-deploy-action@v2
       with:
         resourceGroup: EatUp
         containerAppName: eatup-vendors
-        environment: managedEnvironment-EatUp-a499
+        containerAppEnvironment: managedEnvironment-EatUp-a499
         imageToDeploy: ghcr.io/mma-development/eatup-vendors:latest
         registryUrl: ghcr.io
         registryUsername: ${{ github.actor }}
