@@ -51,9 +51,5 @@ jobs:
         containerAppEnvironment: EatUp
         imageToDeploy: ghcr.io/mma-development/eatup-meals:latest
         registryUrl: ghcr.io
-        registryUsername: ${{ github.actor }}
-        registryPassword: ${{ secrets.GITHUB_TOKEN }}
-        environmentVariables: |
-          ${{
-            format('APP_SETTINGS={0}', secrets.MEALS_APP_SETTINGS)
-          }}
+        registryUsername: ${{ secrets.GHCR_USERNAME }}
+        registryPassword: ${{ secrets.GHCR_PAT }}
