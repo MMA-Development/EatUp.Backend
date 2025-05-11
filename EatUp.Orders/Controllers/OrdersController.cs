@@ -1,5 +1,7 @@
-﻿using EatUp.Orders.Models;
+﻿using EatUp.Orders.DTO;
+using EatUp.Orders.Models;
 using EatUp.Orders.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,13 +12,15 @@ namespace EatUp.Orders.Controllers
     public class OrdersController(IOrderService orderService): ControllerBase
     {
 
-        [HttpPost]
-        public IActionResult AddMeal([FromBody] Order order)
+        [HttpPost("request")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> CreateOrderRequest([FromBody] CreateOrderRequest request, [FromHeader] Guid userId)
         {
             try
             {
-                orderService.AddOrder(order);
-                return Ok();
+                request.UserId = userId;
+                var result = await orderService.CreateOrderRequest(request);
+                return Ok(result);
             }
             catch (ArgumentException ex)
             {
@@ -25,18 +29,20 @@ namespace EatUp.Orders.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> GetPage(int skip = 0, int take = 10)
         {
             var meals = await orderService.GetPage(skip, take);
             return Ok(meals);
         }
 
-        [HttpDelete]
-        public async Task<IActionResult> Delete(Guid id)
+        [HttpDelete("{orderId:guid}/cancel")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> Delete(Guid orderId, [FromHeader] Guid userId)
         {
             try
             {
-                await orderService.Delete(id);
+                await orderService.Delete(orderId);
                 return Ok();
             }
             catch (ArgumentException ex)

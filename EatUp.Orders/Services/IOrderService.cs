@@ -1,12 +1,12 @@
-﻿using EatUp.Orders.Models;
+﻿using EatUp.Orders.DTO;
+using EatUp.Orders.Models;
 
 namespace EatUp.Orders.Services
 {
     public interface IOrderService
     {
-        void AddOrder(Order meal);
+        Task<object> CreateOrderRequest(CreateOrderRequest request);
         Task Delete(Guid id);
-        void EnsureOrder(Order meal);
         Task<PaginationResult<Order>> GetPage(int skip, int take);
     }
 }

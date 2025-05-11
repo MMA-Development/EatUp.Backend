@@ -51,6 +51,7 @@ namespace EatUp.Orders.Models
             });
 
             modelBuilder.Entity<Order>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<Order>().Property(x => x.PaymentStatus).HasConversion<string>();
 
             base.OnModelCreating(modelBuilder);
         }
