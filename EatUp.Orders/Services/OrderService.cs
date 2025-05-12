@@ -81,5 +81,45 @@ namespace EatUp.Orders.Services
             var paymentIntent = await paymentIntentService.CreateAsync(options);
             return paymentIntent;
         }
+
+        public async Task HandlePaymentIntentSucceeded(PaymentIntent? paymentIntent)
+        {
+            _ = paymentIntent ?? throw new ArgumentNullException();
+            if (paymentIntent.Metadata.TryGetValue("order_id", out string orderId))
+            {
+                var order = await repository.GetById(Guid.Parse(orderId));
+                if (order == null)
+                {
+                    throw new ArgumentException("Order not found");
+                }
+
+                order.PaymentStatus = PaymentStatusEnum.Completed;
+                await repository.Save();
+            }
+            else
+            {
+                throw new ArgumentException("Order ID not found in payment intent metadata");
+            }
+        }
+
+        public async Task HandlePaymentIntentFailed(PaymentIntent? paymentIntent)
+        {
+            _ = paymentIntent ?? throw new ArgumentNullException();
+            if (paymentIntent.Metadata.TryGetValue("order_id", out string orderId))
+            {
+                var order = await repository.GetById(Guid.Parse(orderId));
+                if (order == null)
+                {
+                    throw new ArgumentException("Order not found");
+                }
+
+                order.PaymentStatus = PaymentStatusEnum.Failed;
+                await repository.Save();
+            }
+            else
+            {
+                throw new ArgumentException("Order ID not found in payment intent metadata");
+            }
+        }
     }
 }

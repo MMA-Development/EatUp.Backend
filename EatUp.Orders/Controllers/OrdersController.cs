@@ -4,6 +4,7 @@ using EatUp.Orders.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Stripe;
 
 namespace EatUp.Orders.Controllers
 {
@@ -28,9 +29,50 @@ namespace EatUp.Orders.Controllers
             }
         }
 
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateOrder([FromHeader] Guid userId)
+        {
+            var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
+
+            try
+            {
+                var stripeEvent = EventUtility.ParseEvent(json);
+
+                if (stripeEvent.Type == EventTypes.PaymentIntentSucceeded)
+                {
+                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+                    await orderService.HandlePaymentIntentSucceeded(paymentIntent);
+                }
+                else if (stripeEvent.Type == EventTypes.PaymentIntentPaymentFailed)
+                {
+                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+                    await orderService.HandlePaymentIntentFailed(paymentIntent);
+                }
+                else
+                {
+                    Console.WriteLine("Unhandled event type: {0}", stripeEvent.Type);
+                }
+                return Ok();
+            }
+            catch (StripeException e)
+            {
+                return BadRequest();
+            }
+        }
+
         [HttpGet]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> GetPage(int skip = 0, int take = 10)
+        [HttpGet("user")]
+        public async Task<IActionResult> GetPageUser(int skip = 0, int take = 10)
+        {
+            var meals = await orderService.GetPage(skip, take);
+            return Ok(meals);
+        }
+
+        [HttpGet]
+        [Authorize(Policy = "Vendor")]
+        [HttpGet("vendor")]
+        public async Task<IActionResult> GetPageVendor(int skip = 0, int take = 10)
         {
             var meals = await orderService.GetPage(skip, take);
             return Ok(meals);
