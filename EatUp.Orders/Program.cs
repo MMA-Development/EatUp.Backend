@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
 using EatUp.Orders.Services;
@@ -91,7 +92,10 @@ builder.Services.AddSwaggerGen(c =>
 });
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

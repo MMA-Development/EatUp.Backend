@@ -1,16 +1,34 @@
 ﻿using EatUp.Orders.DTO;
+using EatUp.Orders.Extensions;
 using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
 using Stripe;
+using System.Linq.Expressions;
 
 namespace EatUp.Orders.Services
 {
     public class OrderService(IBaseRepository<Order> repository) : IOrderService
     {
-        public async Task<PaginationResult<Order>> GetPage(int skip, int take)
+        public async Task<PaginationResult<Order>> GetPageForVendor(OrdersForVendorParams @params, Guid vendorId)
         {
-            return await repository.GetPage(skip, take, null, false);
+            var expression = GetExpression(@params, vendorId);
+            return await repository.GetPage(@params.Skip, @params.Take, expression);
         }
+
+        private Expression<Func<Order, bool>> GetExpression(OrdersForVendorParams @params, Guid vendorId)
+        {
+            List<Expression<Func<Order, bool>>> expressions = new List<Expression<Func<Order, bool>>>();
+            
+            expressions.Add(order => order.VendorId == vendorId);
+            
+            if (!string.IsNullOrEmpty(@params.Search))
+            {
+                expressions.Add(order => order.UserName.Contains(@params.Search) || order.Id.ToString().Contains(@params.Search));
+            }
+
+            return expressions.AndAll();
+        }
+
         public void EnsureOrder(CreateOrderRequest order)
         {
             if (order == null)
@@ -40,14 +58,14 @@ namespace EatUp.Orders.Services
             await repository.Save();
 
             PaymentIntent paymentIntent = await CreatePaymentIntentForOrder(order);
-            EphemeralKey ephermalKey = await CreateEphemeralKey(order.StripeCustomerId);
+            EphemeralKey ephemeralKey = await CreateEphemeralKey(order.StripeCustomerId);
 
             order.PaymentId = paymentIntent.Id;
             await repository.Save();
 
             return new
             {
-                ephermalKey = ephermalKey.Secret,
+                ephemeralKey = ephemeralKey.Secret,
                 clientSecret = paymentIntent.ClientSecret,
                 orderId = order.Id
             };
@@ -85,7 +103,7 @@ namespace EatUp.Orders.Services
         public async Task HandlePaymentIntentSucceeded(PaymentIntent? paymentIntent)
         {
             _ = paymentIntent ?? throw new ArgumentNullException();
-            if (paymentIntent.Metadata.TryGetValue("order_id", out string orderId))
+            if (paymentIntent.Metadata.TryGetValue("order_id", out string? orderId))
             {
                 var order = await repository.GetById(Guid.Parse(orderId));
                 if (order == null)
@@ -105,7 +123,7 @@ namespace EatUp.Orders.Services
         public async Task HandlePaymentIntentFailed(PaymentIntent? paymentIntent)
         {
             _ = paymentIntent ?? throw new ArgumentNullException();
-            if (paymentIntent.Metadata.TryGetValue("order_id", out string orderId))
+            if (paymentIntent.Metadata.TryGetValue("order_id", out string? orderId))
             {
                 var order = await repository.GetById(Guid.Parse(orderId));
                 if (order == null)

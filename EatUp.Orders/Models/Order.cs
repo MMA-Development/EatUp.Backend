@@ -4,6 +4,7 @@
     {
         public Guid UserId { get; set; }
         public string UserName { get; set; }
+        public Guid VendorId { get; set; }
         public Guid FoodPackageId { get; set; }
         public string FoodPackageTitle { get; set; }
         public PaymentStatusEnum PaymentStatus { get; set; }

@@ -8,7 +8,7 @@ namespace EatUp.Orders.Services
     {
         Task<object> CreateOrderRequest(CreateOrderRequest request);
         Task Delete(Guid id);
-        Task<PaginationResult<Order>> GetPage(int skip, int take);
+        Task<PaginationResult<Order>> GetPageForVendor(OrdersForVendorParams @params, Guid vendorId);
         Task HandlePaymentIntentSucceeded(PaymentIntent? paymentIntent);
         Task HandlePaymentIntentFailed(PaymentIntent? paymentMethod);
     }

@@ -25,7 +25,8 @@ namespace EatUp.Orders.Repositories
             var result = new PaginationResult<TEntity>
             {
                 TotalCount = totalCount,
-                Items = items
+                Items = items,
+                Page = skip == 0 ? 1 : skip / take + 1,
             };
 
             return result;

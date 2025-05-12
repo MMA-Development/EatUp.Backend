@@ -60,22 +60,21 @@ namespace EatUp.Orders.Controllers
             }
         }
 
-        [HttpGet]
-        [Authorize(Policy = "User")]
-        [HttpGet("user")]
-        public async Task<IActionResult> GetPageUser(int skip = 0, int take = 10)
+        [HttpGet("vendor")]
+        [Authorize(Policy = "Vendor")]
+        public async Task<IActionResult> GetPageVendor([FromQuery] OrdersForVendorParams @params, [FromHeader] Guid vendorId)
         {
-            var meals = await orderService.GetPage(skip, take);
+            var meals = await orderService.GetPageForVendor(@params, vendorId);
             return Ok(meals);
         }
 
-        [HttpGet]
-        [Authorize(Policy = "Vendor")]
-        [HttpGet("vendor")]
-        public async Task<IActionResult> GetPageVendor(int skip = 0, int take = 10)
+        [HttpGet("user")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> GetPageVendor()
         {
-            var meals = await orderService.GetPage(skip, take);
-            return Ok(meals);
+            //var meals = await orderService.GetPageForVendor(skip, take);
+            //return Ok(meals);
+            return Ok();
         }
 
         [HttpDelete("{orderId:guid}/cancel")]
