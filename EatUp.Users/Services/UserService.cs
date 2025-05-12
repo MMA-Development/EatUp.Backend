@@ -8,6 +8,7 @@ using EatUp.Users.Models;
 using EatUp.Users.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 
 namespace EatUp.Users.Services
 {
@@ -19,9 +20,22 @@ namespace EatUp.Users.Services
                 throw new ArgumentException($"{nameof(adduser.Username)} is already taken");
 
             User user = adduser.ToUser();
-
+            var stripeCustomerId = await CreateCustomerInStripe(user);
+            user.StripeCustomerId = stripeCustomerId;
             await userRepository.Insert(user);
             await userRepository.Save();
+        }
+
+        private async Task<string> CreateCustomerInStripe(User user)
+        {
+            var options = new CustomerCreateOptions
+            {
+                Name = user.FullName,
+                Email = user.Email,
+            };
+            var service = new CustomerService();
+            Customer customer = await service.CreateAsync(options);
+            return customer.Id;
         }
 
         private async Task<bool> UsernameIsTaken(string username)

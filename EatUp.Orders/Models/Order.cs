@@ -9,6 +9,7 @@
         public PaymentStatusEnum PaymentStatus { get; set; }
         public string? PaymentId { get; set; }
         public float Price { get; internal set; }
+        public string StripeCustomerId { get; set; }
     }
 
     public enum PaymentStatusEnum

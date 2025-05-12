@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,6 +114,7 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
     dbContext.Database.Migrate();
 }
+StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:Secret"] ?? throw new NullReferenceException("StripeSettings:Secret is null");
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
