@@ -73,7 +73,6 @@ namespace EatUp.Orders.Controllers
         public async Task<IActionResult> GetPageVendor(int skip, int take, [FromHeader] Guid userId)
         {
             var meals = await orderService.GetPageForUser(skip, take, userId);
-            //return Ok(meals);
             return Ok(meals);
         }
 
