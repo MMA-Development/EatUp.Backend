@@ -9,10 +9,15 @@ namespace EatUp.Orders.Services
 {
     public class OrderService(IBaseRepository<Order> repository) : IOrderService
     {
-        public async Task<PaginationResult<Order>> GetPageForVendor(OrdersForVendorParams @params, Guid vendorId)
+        public async Task<PaginationResult<OrderDTO>> GetPageForVendor(OrdersForVendorParams @params, Guid vendorId)
         {
             var expression = GetExpression(@params, vendorId);
-            return await repository.GetPage(@params.Skip, @params.Take, expression);
+            return await repository.GetPage(@params.Skip, @params.Take, OrderDTO.FromEntity, expression);
+        }
+        public async Task<PaginationResult<OrderDTO>> GetPageForUser(int skip, int take, Guid userId)
+        {
+            Expression<Func<Order, bool>>  expression = x => x.UserId == userId;
+            return await repository.GetPage(skip, take, OrderDTO.FromEntity, expression);
         }
 
         private Expression<Func<Order, bool>> GetExpression(OrdersForVendorParams @params, Guid vendorId)

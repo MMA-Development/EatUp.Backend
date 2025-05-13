@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using EatUp.Orders.Extensions;
 using EatUp.Orders.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,7 +12,7 @@ namespace EatUp.Orders.Repositories
         {
             _context = context;
         }
-        public async Task<PaginationResult<TEntity>> GetPage(int skip, int take, Expression<Func<TEntity, bool>>? filter = null, bool tracking = false)
+        public async Task<PaginationResult<TTo>> GetPage<TTo>(int skip, int take, Expression<Func<TEntity, TTo>> mapper, Expression<Func<TEntity, bool>>? filter = null, bool tracking = false, string? orderBy = null, bool ascending = false)
         {
             var query = _context.GetQuery<TEntity>(tracking);
 
@@ -19,14 +20,22 @@ namespace EatUp.Orders.Repositories
             {
                 query = query.Where(filter);
             }
+            if (orderBy != null)
+            {
+                query = query.OrderByColumn(orderBy, ascending);
+            }
 
             var totalCount = query.Count();
-            var items = await query.Skip(skip).Take(take).ToListAsync();
-            var result = new PaginationResult<TEntity>
+            var items = await query.Skip(skip)
+                .Take(take)
+                .Select(mapper)
+                .ToListAsync();
+
+            var result = new PaginationResult<TTo>
             {
                 TotalCount = totalCount,
                 Items = items,
-                Page = skip == 0 ? 1 : skip / take + 1,
+                Page = (skip / take) + 1
             };
 
             return result;

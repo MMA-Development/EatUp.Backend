@@ -70,11 +70,11 @@ namespace EatUp.Orders.Controllers
 
         [HttpGet("user")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> GetPageVendor()
+        public async Task<IActionResult> GetPageVendor(int skip, int take, [FromHeader] Guid userId)
         {
-            //var meals = await orderService.GetPageForVendor(skip, take);
+            var meals = await orderService.GetPageForUser(skip, take, userId);
             //return Ok(meals);
-            return Ok();
+            return Ok(meals);
         }
 
         [HttpDelete("{orderId:guid}/cancel")]
