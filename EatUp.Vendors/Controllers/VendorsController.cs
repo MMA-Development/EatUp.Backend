@@ -71,9 +71,9 @@ namespace EatUp.Vendors.Controllers
 
         [HttpGet]
         [AllowAnonymous]
-        public async Task<IActionResult> GetPage(int skip = 0, int take = 10)
+        public async Task<IActionResult> GetPage([FromQuery] VendorSearchParams @params)
         {
-            var Vendors = await vendorService.GetPage(skip, take);
+            var Vendors = await vendorService.GetPage(@params);
             return Ok(Vendors);
         }
 

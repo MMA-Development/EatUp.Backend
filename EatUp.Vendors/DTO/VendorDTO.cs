@@ -1,4 +1,5 @@
 ﻿using EatUp.Vendors.Models;
+using System.Linq.Expressions;
 
 namespace EatUp.Vendors.DTO
 {
@@ -12,18 +13,16 @@ namespace EatUp.Vendors.DTO
         public double Longitude { get; set; }
         public double Latitude { get; set; }
 
-        internal static VendorDTO FromVendor(Vendor vendor)
-        {
-            return new VendorDTO
+        internal static Expression<Func<Vendor, VendorDTO>> FromVendor = (Vendor vendor) =>
+            new VendorDTO
             {
                 Name = vendor.Name,
                 Logo = vendor.Logo,
                 Cvr = vendor.Cvr,
                 Username = vendor.Username,
                 Email = vendor.Email,
-                Longitude = vendor.Longitude,
-                Latitude = vendor.Latitude
+                Longitude = vendor.Location.X,
+                Latitude = vendor.Location.Y
             };
-        }
     }
 }

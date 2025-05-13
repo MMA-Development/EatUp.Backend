@@ -1,14 +1,17 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using EatUp.Vendors.DTO;
+using EatUp.Vendors.Extensions;
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using NetTopologySuite.Geometries;
 using Stripe;
 
 namespace EatUp.Vendors.Services
@@ -73,9 +76,19 @@ namespace EatUp.Vendors.Services
             return await vendorRepository.Exist(x => x.Username == username);
         }
 
-        public async Task<PaginationResult<Vendor>> GetPage(int skip, int take)
+        public async Task<PaginationResult<VendorDTO>> GetPage(VendorSearchParams @params)
         {
-            return await vendorRepository.GetPage(skip, take, null, false);
+            var userLocation = new Point(@params.Latitude, @params.Longitude) { SRID = 4326 };
+            
+            var expressions = new List<Expression<Func<Vendor, bool>>>();
+            expressions.Add(vendor => vendor.Location != null && vendor.Location.IsWithinDistance(userLocation, @params.Radius));
+            
+            if (!string.IsNullOrEmpty(@params.Search))
+            {
+                expressions.Add(vendor => vendor.Name.Contains(@params.Search));
+            }
+
+            return await vendorRepository.GetPage(@params.Skip, @params.Take, VendorDTO.FromVendor, expressions.AndAll());
         }
 
         public async Task Delete(Guid id)
@@ -149,7 +162,7 @@ namespace EatUp.Vendors.Services
 
         public async Task UpdateVendor(UpdateVendorDTO vendorDTO, Guid vendorId)
         {
-            var vendorFromDb = await vendorRepository.GetById(vendorId, true); ;
+            var vendorFromDb = await vendorRepository.GetById(vendorId, x => x, true); ;
             if (vendorFromDb == null)
                 throw new ArgumentException("Vendor not found");
 
@@ -159,11 +172,11 @@ namespace EatUp.Vendors.Services
 
         public async Task<VendorDTO> GetVendorById(Guid vendorId)
         {
-            var vendor = await vendorRepository.GetById(vendorId);
+            var vendor = await vendorRepository.GetById(vendorId, VendorDTO.FromVendor);
             if (vendor == null)
                 throw new ArgumentException("Vendor not found");
 
-            return VendorDTO.FromVendor(vendor);
+            return vendor;
         }
 
         public async Task<VendorTokens> RefreshToken(string refreshToken)

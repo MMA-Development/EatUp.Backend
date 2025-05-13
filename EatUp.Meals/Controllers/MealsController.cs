@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 namespace EatUp.Meals.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("[controller]")]
     public class MealsController(IMealService mealService) : ControllerBase
     {
@@ -27,6 +26,7 @@ namespace EatUp.Meals.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetPage([FromQuery] MealSearchParamsDTO mealSearchParams)
         {
             try
@@ -56,6 +56,7 @@ namespace EatUp.Meals.Controllers
         }
 
         [HttpGet("{mealId:guid}")]
+        [Authorize]
         public async Task<IActionResult> GetMeal([FromRoute] Guid mealId)
         {
             try

@@ -16,8 +16,10 @@ namespace EatUp.Vendors.DTO
         {
             vendorFromDb.Email = Email;
             vendorFromDb.Name = Name;
-            vendorFromDb.Longitude = Longitude;
-            vendorFromDb.Latitude = Latitude;
+            vendorFromDb.Location = new NetTopologySuite.Geometries.Point(Longitude, Latitude)
+            {
+                SRID = 4326
+            };
         }
     }
 }

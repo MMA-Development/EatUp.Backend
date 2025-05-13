@@ -2,7 +2,7 @@
 
 namespace EatUp.Vendors
 {
-    public class PaginationResult<TEntity> where TEntity: BaseEntity
+    public class PaginationResult<TEntity>
     {
         public IEnumerable<TEntity> Items { get; set; }
         public int TotalCount { get; set; }

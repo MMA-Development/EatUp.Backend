@@ -56,8 +56,4 @@ jobs:
         registryUrl: ghcr.io
         registryUsername: ${{ secrets.GHCR_USERNAME }}
         registryPassword: ${{ secrets.GHCR_PAT }}
-        environmentVariables: |
-           ReverseProxy__Clusters__vendors__Destinations__destination1__Address=http://eatup-vendors.internal.victoriousground-0340a2d8.northeurope.azurecontainerapps.io
-           ReverseProxy__Clusters__users__Destinations__destination1__Address=http://eatup-users.internal.victoriousground-0340a2d8.northeurope.azurecontainerapps.io/
-           ReverseProxy__Clusters__orders__Destinations__destination1__Address=http://eatup-orders.internal.victoriousground-0340a2d8.northeurope.azurecontainerapps.io/
-           ReverseProxy__Clusters__meals__Destinations__destination1__Address=http://eatup-meals.internal.victoriousground-0340a2d8.northeurope.azurecontainerapps.io/
+        

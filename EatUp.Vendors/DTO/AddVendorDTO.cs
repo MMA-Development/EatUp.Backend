@@ -34,8 +34,10 @@ namespace EatUp.Vendors.DTO
                 Name = Name,
                 Username = Username,
                 Cvr = CVR,
-                Longitude = Longitude,
-                Latitude = Latitude,
+                Location = new NetTopologySuite.Geometries.Point(Longitude, Latitude)
+                {
+                    SRID = 4326
+                },
                 Logo = "default",
                 Email = Email,
             };

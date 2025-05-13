@@ -9,7 +9,7 @@ namespace EatUp.Vendors.Services
         Task<AccountLink?> AddVendor(AddVendorDTO addVendor);
         Task<VendorTokens> SignIn(SignInVendorDTO addVendor);
         Task Delete(Guid id);
-        Task<PaginationResult<Vendor>> GetPage(int skip, int take);
+        Task<PaginationResult<VendorDTO>> GetPage(VendorSearchParams @params);
         Task UpdateVendor(UpdateVendorDTO vendorDTO, Guid vendorId);
         Task<VendorDTO> GetVendorById(Guid vendorId);
         Task<VendorTokens> RefreshToken(string refreshToken);

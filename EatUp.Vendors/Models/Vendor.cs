@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using NetTopologySuite.Geometries;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace EatUp.Vendors.Models
 {
@@ -10,8 +11,7 @@ namespace EatUp.Vendors.Models
         public string Username { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string Password { get; set; } = null!;
-        public double Longitude { get; set; }
-        public double Latitude { get; set; }
+        public Point? Location { get; set; }
         public string StripeAccountId { get; set; } = null!;
 
         [ForeignKey("VendorId")]
