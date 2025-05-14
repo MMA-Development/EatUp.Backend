@@ -81,7 +81,7 @@ namespace EatUp.Vendors.Services
             var userLocation = new Point(@params.Longitude, @params.Latitude) { SRID = 4326 };
             
             var expressions = new List<Expression<Func<Vendor, bool>>>();
-            expressions.Add(vendor => vendor.Location != null && vendor.Location.IsWithinDistance(userLocation, @params.Radius));
+            expressions.Add(vendor => vendor.Location != null && vendor.Location.Distance(userLocation) <= @params.Radius);
             
             if (!string.IsNullOrEmpty(@params.Search))
             {
