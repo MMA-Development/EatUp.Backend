@@ -110,7 +110,7 @@ namespace EatUp.Orders.Services
             _ = paymentIntent ?? throw new ArgumentNullException();
             if (paymentIntent.Metadata.TryGetValue("order_id", out string? orderId))
             {
-                var order = await repository.GetById(Guid.Parse(orderId));
+                var order = await repository.GetById(Guid.Parse(orderId), true);
                 if (order == null)
                 {
                     throw new ArgumentException("Order not found");
@@ -128,9 +128,9 @@ namespace EatUp.Orders.Services
         public async Task HandlePaymentIntentFailed(PaymentIntent? paymentIntent)
         {
             _ = paymentIntent ?? throw new ArgumentNullException();
-            if (paymentIntent.Metadata.TryGetValue("order_id", out string? orderId))
+            if (paymentIntent.Metadata.TryGetValue("order_id", out string? orderId)) 
             {
-                var order = await repository.GetById(Guid.Parse(orderId));
+                var order = await repository.GetById(Guid.Parse(orderId), true);
                 if (order == null)
                 {
                     throw new ArgumentException("Order not found");
