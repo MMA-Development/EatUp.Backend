@@ -11,6 +11,7 @@ namespace EatUp.Orders.DTO
         public string FoodPackageTitle { get; set; }
         public string StripeCustomerId { get; set; }
         public Guid VendorId { get; set; }
+        public int Quantity { get; set; }
 
         public Order ToOrder()
         {
@@ -23,7 +24,8 @@ namespace EatUp.Orders.DTO
                 PaymentStatus = PaymentStatusEnum.Pending,
                 Price = Price,
                 StripeCustomerId = StripeCustomerId,
-                VendorId = VendorId
+                VendorId = VendorId,
+                Quantity = Quantity
             };
         }
     }

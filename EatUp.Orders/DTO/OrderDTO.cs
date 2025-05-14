@@ -13,6 +13,7 @@ namespace EatUp.Orders.DTO
         public PaymentStatusEnum PaymentStatus { get; set; }
         public string? PaymentId { get; set; }
         public float Price { get; internal set; }
+        public int Quantity { get; set; }
 
         public static Expression<Func<Order, OrderDTO>> FromEntity = (order) =>
              new OrderDTO
@@ -24,7 +25,8 @@ namespace EatUp.Orders.DTO
                  FoodPackageTitle = order.FoodPackageTitle,
                  PaymentStatus = order.PaymentStatus,
                  PaymentId = order.PaymentId,
-                 Price = order.Price
+                 Price = order.Price,
+                 Quantity = order.Quantity
              };
     }
 }
