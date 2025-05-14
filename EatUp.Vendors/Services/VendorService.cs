@@ -78,7 +78,7 @@ namespace EatUp.Vendors.Services
 
         public async Task<PaginationResult<VendorDTO>> GetPage(VendorSearchParams @params)
         {
-            var userLocation = new Point(@params.Latitude, @params.Longitude) { SRID = 4326 };
+            var userLocation = new Point(@params.Longitude, @params.Latitude) { SRID = 4326 };
             
             var expressions = new List<Expression<Func<Vendor, bool>>>();
             expressions.Add(vendor => vendor.Location != null && vendor.Location.IsWithinDistance(userLocation, @params.Radius));
