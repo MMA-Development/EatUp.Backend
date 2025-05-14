@@ -12,8 +12,8 @@ namespace EatUp.Meals.Controllers
     public class MealsController(IMealService mealService) : ControllerBase
     {
         [Authorize(Policy = "Vendor")]
-        [HttpPost("{vendorId:guid}")]
-        public async Task<IActionResult> AddMeal([FromRoute] Guid vendorId, [FromBody] AddMealDTO meal)
+        [HttpPost]
+        public async Task<IActionResult> AddMeal([FromHeader] Guid vendorId, [FromBody] AddMealDTO meal)
         {
             try
             {
