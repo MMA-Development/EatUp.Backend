@@ -40,6 +40,22 @@ namespace EatUp.Meals.Controllers
             }
         }
 
+        [HttpGet("vendor")]
+        [Authorize(Policy = "Vendor")]
+        public async Task<IActionResult> GetPageVendor([FromQuery] MealSearchParamsDTO mealSearchParams, [FromHeader] Guid vendorId)
+        {
+            try
+            {
+                mealSearchParams.VendorId = vendorId;
+                var meals = await mealService.GetPage(mealSearchParams);
+                return Ok(meals);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPut("{mealId:guid}")]
         [Authorize(Policy = "Vendor")]
         public async Task<IActionResult> UpdateMeal([FromRoute] Guid mealId, [FromQuery] Guid vendorId, [FromBody] UpdateMealDTO meal)
