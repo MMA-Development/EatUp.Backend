@@ -104,6 +104,7 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddTransient<IRepository<Vendor>, Repository<Vendor>>();
 builder.Services.AddTransient<IRepository<RefreshTokenInformation>, Repository<RefreshTokenInformation>>();
 builder.Services.AddTransient<IVendorservice, Vendorservice>();
+builder.Services.AddSingleton<IRabbitMqPublisher>(x => new RabbitMqPublisher("localhost", "events"));
 
 var app = builder.Build();
 
@@ -120,6 +121,10 @@ using (var scope = app.Services.CreateScope())
 }
 
 StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:Secret"];
+
+var dispatcher = new EventDispatcher();
+var consumer = new RabbitMqConsumer("localhost", "events", "vendorQueue", dispatcher);
+await consumer.Start();
 
 app.UseHttpsRedirection();
 

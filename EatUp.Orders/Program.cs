@@ -1,8 +1,10 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using EatUp.Orders.EventHandlers;
 using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
 using EatUp.Orders.Services;
+using EatUp.RabbitMQ.Events;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -117,6 +119,12 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
     dbContext.Database.Migrate();
 }
+
+
+var dispatcher = new EventDispatcher();
+dispatcher.Register(new VendorCreatedHandler());
+var consumer = new RabbitMqConsumer("localhost", "events", "orderQueue", dispatcher);
+await consumer.Start();
 
 var secret = builder.Configuration["StripeSettings:Secret"];
 StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:Secret"];

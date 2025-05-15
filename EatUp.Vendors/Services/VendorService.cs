@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using EatUp.RabbitMQ.Events;
 using EatUp.Vendors.DTO;
 using EatUp.Vendors.Extensions;
 using EatUp.Vendors.Models;
@@ -16,7 +17,7 @@ using Stripe;
 
 namespace EatUp.Vendors.Services
 {
-    public class Vendorservice(IRepository<Vendor> vendorRepository, IRepository<RefreshTokenInformation> refreshTokenRepository, IConfiguration configuration) : IVendorservice
+    public class Vendorservice(IRabbitMqPublisher publisher, IRepository<Vendor> vendorRepository, IRepository<RefreshTokenInformation> refreshTokenRepository, IConfiguration configuration) : IVendorservice
     {
 
         public async Task<AccountLink> AddVendor(AddVendorDTO addVendor)
@@ -32,6 +33,17 @@ namespace EatUp.Vendors.Services
 
             await vendorRepository.Insert(vendor);
             await vendorRepository.Save();
+
+            await publisher.Publish(new VendorCreatedEvent
+            {
+                Id = vendor.Id,
+                Name = vendor.Name,
+                StripeAccountId = stripeAccountId,
+                Email = vendor.Email,
+                Cvr = vendor.Cvr,
+                Longitude = vendor.Location.X,
+                Latitude = vendor.Location.Y
+            });
 
             return accountLink;
         }

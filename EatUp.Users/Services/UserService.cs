@@ -114,7 +114,7 @@ namespace EatUp.Users.Services
 
         public async Task UpdateUser(UpdateUserDTO userDTO, Guid userId)
         {
-            var userFromDb = await userRepository.GetById(userId, true); ;
+            var userFromDb = await userRepository.GetById(userId, true);
             if (userFromDb == null)
                 throw new ArgumentException("User not found");
 
