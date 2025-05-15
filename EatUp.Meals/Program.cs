@@ -1,10 +1,10 @@
 using System.Text;
-using EatUp.Meals.EventHandler;
+using EatUp.Meals.EventHandlers;
 using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
 using EatUp.Meals.Services;
 using EatUp.RabbitMQ;
-using EatUp.RabbitMQ.Events;
+using EatUp.RabbitMQ.Events.Vendor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -107,19 +107,19 @@ builder.Services.AddDbContext<Context>(options =>
 //repositrories
 builder.Services.AddTransient<IRepository<Meal>, Repository<Meal>>();
 builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
-builder.Services.AddTransient<IRepository<VendorProjections>, Repository<VendorProjections>>();
+builder.Services.AddTransient<IRepository<VendorProjection>, Repository<VendorProjection>>();
 
 //services
 builder.Services.AddTransient<IMealService, MealService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 
 //Event handlers
-builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedHandler>();
+builder.Services.AddSingleton<EventDispatcher>();
+builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedEventHandler>();
+builder.Services.AddTransient<IEventHandler<VendorUpdatedEvent>, VendorUpdatedEventHandler>();
+builder.Services.AddTransient<IEventHandler<VendorDeletedEvent>, VendorDeletedEventHandler>();
 
 var app = builder.Build();
-
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -132,9 +132,8 @@ using (var scope = app.Services.CreateScope())
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
     dbContext.Database.Migrate();
 
-    var dispatcher = new EventDispatcher();
+    var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
     var consumer = new RabbitMqConsumer("localhost", "events", "meals", dispatcher);
-    DispatcherRegistration.RegisterAllEventHandlers(dispatcher, scope.ServiceProvider);
     await consumer.Start();
 }
 app.UseHttpsRedirection();

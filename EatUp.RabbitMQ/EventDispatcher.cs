@@ -1,41 +1,42 @@
 ﻿using EatUp.RabbitMQ;
-using EatUp.RabbitMQ.Events;
+using EatUp.RabbitMQ.Events.Vendor;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Text.Json;
 
-public class EventDispatcher
+public class EventDispatcher(IServiceScopeFactory scopeFactory)
 {
-    private readonly Dictionary<string, Func<IEvent, Task>> _handlers = new();
-
-    public void Register<T>(IEventHandler<T> handler) where T : IEvent
-    {
-        var typeName = typeof(T).Name;
-        _handlers[typeName] = (e) => handler.HandleAsync((T)e);
-    }
-
-    public IEvent? DeserializeEvent(string json, string eventType)
+    internal IEvent? DeserializeEvent(string json, string eventType)
     {
         return eventType switch
         {
-            "VendorCreatedEvent" => JsonSerializer.Deserialize<VendorCreatedEvent>(json, new JsonSerializerOptions()
-            {
-                AllowTrailingCommas = true,
-                PropertyNameCaseInsensitive = true,
-            }),
+            "VendorCreatedEvent" => JsonSerializer.Deserialize<VendorCreatedEvent>(json),
+            "VendorDeletedEvent" => JsonSerializer.Deserialize<VendorDeletedEvent>(json),
+            "VendorUpdatedEvent" => JsonSerializer.Deserialize<VendorUpdatedEvent>(json),
             _ => null
         };
     }
 
-    public async Task DispatchAsync(IEvent @event)
+    internal async Task DispatchAsync(IEvent @event)
     {
-        var typeName = @event.GetType().Name;
-        if (_handlers.TryGetValue(typeName, out var handler))
+        try
         {
-            await handler(@event);
+            var scope = scopeFactory.CreateScope();
+            var typeName = @event.GetType().Name;
+            var handlerType = typeof(IEventHandler<>).MakeGenericType(@event.GetType());
+            var handler = scope.ServiceProvider.GetService(handlerType);
+            if (handler == null)
+            {
+                Console.WriteLine($"No handler registered for {typeName}");
+                return;
+            }
+            handler.GetType()
+                .GetMethod("HandleAsync")
+                ?.Invoke(handler, [@event]);
         }
-        else
+        catch (Exception ex)
         {
-            Console.WriteLine($"No handler registered for {typeName}");
+            Console.WriteLine($"Error handling event {@event}: {ex.Message}");
         }
     }
 }

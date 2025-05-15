@@ -34,7 +34,7 @@ public class RabbitMqConsumer
             Console.WriteLine("Message received");
             var body = Encoding.UTF8.GetString(args.Body.ToArray());
             var eventType = args.BasicProperties.Type ?? Encoding.UTF8.GetString((byte[])args.BasicProperties.Headers["Type"]);
-
+            
             var eventObj = _dispatcher.DeserializeEvent(body, eventType);
             if (eventObj is not null)
             {

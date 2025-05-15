@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using EatUp.RabbitMQ.Events;
+using EatUp.RabbitMQ.Events.Vendor;
 using EatUp.Vendors.DTO;
 using EatUp.Vendors.Extensions;
 using EatUp.Vendors.Models;
@@ -19,7 +20,6 @@ namespace EatUp.Vendors.Services
 {
     public class Vendorservice(IRabbitMqPublisher publisher, IRepository<Vendor> vendorRepository, IRepository<RefreshTokenInformation> refreshTokenRepository, IConfiguration configuration) : IVendorservice
     {
-
         public async Task<AccountLink> AddVendor(AddVendorDTO addVendor)
         {
             if (await UsernameIsTaken(addVendor.Username))
@@ -107,6 +107,7 @@ namespace EatUp.Vendors.Services
         {
             await vendorRepository.Delete(id);
             await vendorRepository.Save();
+            await publisher.Publish(new VendorDeletedEvent(id));
         }
 
         public async Task<VendorTokens> SignIn(SignInVendorDTO signInVendor)
@@ -174,12 +175,13 @@ namespace EatUp.Vendors.Services
 
         public async Task UpdateVendor(UpdateVendorDTO vendorDTO, Guid vendorId)
         {
-            var vendorFromDb = await vendorRepository.GetById(vendorId, x => x, true); ;
+            var vendorFromDb = await vendorRepository.GetById(vendorId, x => x, true);
             if (vendorFromDb == null)
                 throw new ArgumentException("Vendor not found");
 
             vendorDTO.Merge(vendorFromDb);
             await vendorRepository.Save();
+            await publisher.Publish(vendorDTO.ToEvent(vendorFromDb.Id));
         }
 
         public async Task<VendorDTO> GetVendorById(Guid vendorId)

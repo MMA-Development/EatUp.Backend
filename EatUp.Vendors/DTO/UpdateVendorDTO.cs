@@ -1,4 +1,5 @@
-﻿using EatUp.Vendors.Models;
+﻿using EatUp.RabbitMQ.Events.Vendor;
+using EatUp.Vendors.Models;
 
 namespace EatUp.Vendors.DTO
 {
@@ -19,6 +20,17 @@ namespace EatUp.Vendors.DTO
             vendorFromDb.Location = new NetTopologySuite.Geometries.Point(Longitude, Latitude)
             {
                 SRID = 4326
+            };
+        }
+
+        internal VendorUpdatedEvent ToEvent(Guid id)
+        {
+            return new VendorUpdatedEvent
+            {
+                Id = id,
+                Name = Name,
+                Longitude = Longitude,
+                Latitude = Latitude
             };
         }
     }

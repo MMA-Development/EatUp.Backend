@@ -1,5 +1,5 @@
 ﻿using EatUp.RabbitMQ;
-using EatUp.RabbitMQ.Events;
+using EatUp.RabbitMQ.Events.Vendor;
 
 namespace EatUp.Orders.EventHandlers
 {

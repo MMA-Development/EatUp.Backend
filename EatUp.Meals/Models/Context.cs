@@ -15,7 +15,7 @@ namespace EatUp.Meals.Models
 
         public DbSet<Meal> Meals { get; set; }
 
-        public DbSet<VendorProjections> VendorProjections { get; set; }
+        public DbSet<VendorProjection> VendorProjections { get; set; }
 
         public override int SaveChanges()
         {

@@ -5,12 +5,14 @@ using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
 using EatUp.Orders.Services;
 using EatUp.RabbitMQ;
-using EatUp.RabbitMQ.Events;
+using EatUp.RabbitMQ.Events.Vendor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Writers;
 using Stripe;
+using static System.Formats.Asn1.AsnWriter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -108,6 +110,7 @@ builder.Services.AddTransient<IBaseRepository<Order>, Repository<Order>>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 
 //Event Handlers
+builder.Services.AddSingleton<EventDispatcher>();
 builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedHandler>();
 
 var app = builder.Build();
@@ -122,12 +125,12 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
     dbContext.Database.Migrate();
+
+    var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
+    var consumer = new RabbitMqConsumer("localhost", "events", "orderQueue", dispatcher);
+    await consumer.Start();
 }
 
-var dispatcher = new EventDispatcher();
-dispatcher.Register(app.Services.GetService<IEventHandler<VendorCreatedEvent>>());
-var consumer = new RabbitMqConsumer("localhost", "events", "orderQueue", dispatcher);
-await consumer.Start();
 
 var secret = builder.Configuration["StripeSettings:Secret"];
 StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:Secret"];
