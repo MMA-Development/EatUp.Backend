@@ -15,11 +15,12 @@ namespace EatUp.Meals.Models
 
         public DbSet<Meal> Meals { get; set; }
 
+        public DbSet<VendorProjections> VendorProjections { get; set; }
 
         public override int SaveChanges()
         {
             var entries = ChangeTracker.Entries()
-                .Where(e => e.Entity is BaseEntity && (e.State == EntityState.Added || e.State == EntityState.Modified || e.State == EntityState.Deleted));
+                .Where(e => e.Entity is BaseEntity);
 
             foreach (var entry in entries)
             {

@@ -102,9 +102,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Context>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), x => x.UseNetTopologySuite()));
+
+//repositrories
 builder.Services.AddTransient<IRepository<Meal>, Repository<Meal>>();
 builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
+builder.Services.AddTransient<IRepository<VendorProjections>, Repository<VendorProjections>>();
+
+//services
 builder.Services.AddTransient<IMealService, MealService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 
@@ -113,11 +118,7 @@ builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedHa
 
 var app = builder.Build();
 
-var dispatcher = new EventDispatcher();
-DispatcherRegistration.RegisterAllEventHandlers(dispatcher, app.Services);
 
-var consumer = new RabbitMqConsumer("localhost", "events", "meals", dispatcher);
-await consumer.Start();
 
 
 // Configure the HTTP request pipeline.
@@ -130,6 +131,11 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
     dbContext.Database.Migrate();
+
+    var dispatcher = new EventDispatcher();
+    var consumer = new RabbitMqConsumer("localhost", "events", "meals", dispatcher);
+    DispatcherRegistration.RegisterAllEventHandlers(dispatcher, scope.ServiceProvider);
+    await consumer.Start();
 }
 app.UseHttpsRedirection();
 
