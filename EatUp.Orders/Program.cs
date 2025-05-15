@@ -4,6 +4,7 @@ using EatUp.Orders.EventHandlers;
 using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
 using EatUp.Orders.Services;
+using EatUp.RabbitMQ;
 using EatUp.RabbitMQ.Events;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -106,6 +107,9 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddTransient<IBaseRepository<Order>, Repository<Order>>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 
+//Event Handlers
+builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedHandler>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -120,9 +124,8 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 }
 
-
 var dispatcher = new EventDispatcher();
-dispatcher.Register(new VendorCreatedHandler());
+dispatcher.Register(app.Services.GetService<IEventHandler<VendorCreatedEvent>>());
 var consumer = new RabbitMqConsumer("localhost", "events", "orderQueue", dispatcher);
 await consumer.Start();
 

@@ -1,7 +1,10 @@
 using System.Text;
+using EatUp.Meals.EventHandler;
 using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
 using EatUp.Meals.Services;
+using EatUp.RabbitMQ;
+using EatUp.RabbitMQ.Events;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -105,7 +108,17 @@ builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
 builder.Services.AddTransient<IMealService, MealService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
 
+//Event handlers
+builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedHandler>();
+
 var app = builder.Build();
+
+var dispatcher = new EventDispatcher();
+DispatcherRegistration.RegisterAllEventHandlers(dispatcher, app.Services);
+
+var consumer = new RabbitMqConsumer("localhost", "events", "meals", dispatcher);
+await consumer.Start();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
