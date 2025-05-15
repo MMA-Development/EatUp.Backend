@@ -2,19 +2,23 @@
 using EatUp.RabbitMQ.Events.Vendor;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Reflection;
 using System.Text.Json;
 
 public class EventDispatcher(IServiceScopeFactory scopeFactory)
 {
+    private static readonly Dictionary<string, Type> _eventTypeMap = Assembly.GetExecutingAssembly()
+        .GetTypes()
+        .Where(t => typeof(IEvent).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract)
+        .ToDictionary(t => t.Name, t => t);
+
     internal IEvent? DeserializeEvent(string json, string eventType)
     {
-        return eventType switch
+        if (_eventTypeMap.TryGetValue(eventType, out var type))
         {
-            "VendorCreatedEvent" => JsonSerializer.Deserialize<VendorCreatedEvent>(json),
-            "VendorDeletedEvent" => JsonSerializer.Deserialize<VendorDeletedEvent>(json),
-            "VendorUpdatedEvent" => JsonSerializer.Deserialize<VendorUpdatedEvent>(json),
-            _ => null
-        };
+            return JsonSerializer.Deserialize(json, type) as IEvent;
+        }
+        return null;
     }
 
     internal async Task DispatchAsync(IEvent @event)
@@ -30,9 +34,15 @@ public class EventDispatcher(IServiceScopeFactory scopeFactory)
                 Console.WriteLine($"No handler registered for {typeName}");
                 return;
             }
-            handler.GetType()
+
+            object? handlerTask = handler.GetType()
                 .GetMethod("HandleAsync")
                 ?.Invoke(handler, [@event]);
+
+            if (handlerTask is Task task)
+            {
+                await task;
+            }
         }
         catch (Exception ex)
         {

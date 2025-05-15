@@ -37,6 +37,7 @@ jobs:
 
   deploy:
     needs: [build]
+    environment: Production
     runs-on: ubuntu-latest
     steps:
     - name: Log in to Azure

@@ -14,5 +14,27 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     restart: unless-stopped
 
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    ports:
+      - "1433:1433"  # MSSQL default port
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Password"
+    volumes:
+      - mssql_data:/var/opt/mssql
+    restart: unless-stopped
+  
 volumes:
   rabbitmq_data:
+
+networks:
+    default:
+        driver: bridge
+        name: eatup_network
+    
+    mssql_data:
+        driver: local
+        name: mssql_data
+ 
