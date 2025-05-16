@@ -8,9 +8,9 @@ public class RabbitMqPublisher : IRabbitMqPublisher
     private readonly ConnectionFactory _factory;
     private readonly string _exchangeName;
 
-    public RabbitMqPublisher(string hostName, string exchangeName)
+    public RabbitMqPublisher(string hostName, string exchangeName, string username, string password)
     {
-        _factory = new ConnectionFactory { HostName = hostName, UserName = "admin", Password = "password" };
+        _factory = new ConnectionFactory { HostName = hostName, UserName = username, Password = password };
         _exchangeName = exchangeName;
     }
 

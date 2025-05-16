@@ -127,7 +127,7 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 
     var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
-    var consumer = new RabbitMqConsumer("localhost", "events", "orderQueue", dispatcher);
+    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "orders", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher);
     await consumer.Start();
 }
 

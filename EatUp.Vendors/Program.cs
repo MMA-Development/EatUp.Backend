@@ -104,7 +104,13 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddTransient<IRepository<Vendor>, Repository<Vendor>>();
 builder.Services.AddTransient<IRepository<RefreshTokenInformation>, Repository<RefreshTokenInformation>>();
 builder.Services.AddTransient<IVendorservice, Vendorservice>();
-builder.Services.AddSingleton<IRabbitMqPublisher>(x => new RabbitMqPublisher("localhost", "events"));
+builder.Services.AddSingleton<IRabbitMqPublisher>(x => 
+    new RabbitMqPublisher(
+        builder.Configuration["RabbitMQ:Host"], 
+        "events", 
+        builder.Configuration["RabbitMQ:Username"], 
+        builder.Configuration["RabbitMQ:Password"]
+    ));
 builder.Services.AddSingleton<EventDispatcher>();
 
 var app = builder.Build();
@@ -122,7 +128,7 @@ using (var scope = app.Services.CreateScope())
 
 
     var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
-    var consumer = new RabbitMqConsumer("localhost", "events", "vendorQueue", dispatcher);
+    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "vendors", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher);
     await consumer.Start();
 }
 

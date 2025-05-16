@@ -10,9 +10,9 @@ public class RabbitMqConsumer
     private readonly string _queue;
     private readonly EventDispatcher _dispatcher;
 
-    public RabbitMqConsumer(string hostName, string exchange, string queue, EventDispatcher dispatcher)
+    public RabbitMqConsumer(string hostName, string exchange, string queue, string username, string password, EventDispatcher dispatcher)
     {
-        _factory = new ConnectionFactory { HostName = hostName, UserName = "admin", Password = "password" };
+        _factory = new ConnectionFactory { HostName = hostName, UserName = username, Password = password };
         _exchange = exchange;
         _queue = queue;
         _dispatcher = dispatcher;
