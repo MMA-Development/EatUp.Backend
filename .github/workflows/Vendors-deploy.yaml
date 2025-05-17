@@ -43,9 +43,7 @@ jobs:
     - name: Tailscale
       uses: tailscale/github-action@v3
       with:
-        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
-        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
-        tags: tag:ci
+        authkey: ${{ secrets.TAILSCALE_AUTH_KEY }}
 
     - name: Trigger deployments
       run: curl http://kubernetes01:3000/deploy?sha=${{ github.sha }}&imageName=eatup-vendors
