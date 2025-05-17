@@ -31,11 +31,27 @@ jobs:
 
     - name: Build and Push Docker image to GHCR
       run: |
-        IMAGE_NAME=ghcr.io/mma-development/eatup-vendors:latest
+        IMAGE_NAME=ghcr.io/mma-development/eatup-vendors:${{github.sha}}
         docker build -f EatUp.Vendors/Dockerfile -t $IMAGE_NAME .
         docker push $IMAGE_NAME
 
-  deploy:
+  deploy_dev:
+    needs: [build]
+    environment: Development
+    runs-on: ubuntu-latest
+    steps:
+    - name: Tailscale
+      uses: tailscale/github-action@v3
+      with:
+        oauth-client-id: ${{ secrets.TS_OAUTH_CLIENT_ID }}
+        oauth-secret: ${{ secrets.TS_OAUTH_SECRET }}
+        tags: tag:ci
+
+    - name: Trigger deployments
+      run: curl http://kubernetes01:3000/deploy?sha=${{ github.sha }}&imageName=eatup-vendors
+      
+
+  deploy_prod:
     needs: [build]
     environment: Production
     runs-on: ubuntu-latest
@@ -52,7 +68,7 @@ jobs:
         resourceGroup: EatUp
         containerAppName: eatup-vendors
         containerAppEnvironment: managedEnvironment-EatUp-a499
-        imageToDeploy: ghcr.io/mma-development/eatup-vendors:latest
+        imageToDeploy: ghcr.io/mma-development/eatup-vendors:${{github.sha}}}}
         registryUrl: ghcr.io
         registryUsername: ${{ secrets.GHCR_USERNAME }}
         registryPassword: ${{ secrets.GHCR_PAT }}
