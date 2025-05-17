@@ -34,8 +34,29 @@ jobs:
         docker build -f EatUp.Gateway/Dockerfile -t $IMAGE_NAME .
         docker push $IMAGE_NAME
 
+  deploy_dev:
+    needs: [build]
+    environment: Development
+    runs-on: ubuntu-latest
+    steps:
+    - name: Tailscale
+      uses: tailscale/github-action@v3
+      with:
+        authkey: ${{ secrets.TAILSCALE_AUTH_KEY }}
+
+    - name: Wait for Tailscale to be connected
+      run: |
+        for i in {1..10}; do
+          tailscale status | grep -q "Logged in as" && break
+          echo "Waiting for Tailscale..."
+          sleep 1
+        done
+
+    - name: Trigger deployments
+      run: curl "http://kubernetes01:3000/deploy?sha=${{ github.sha }}&imageName=eatup-gateway"
+      
   
-  deploy:
+  deploy_prod:
     needs: [build]
     runs-on: ubuntu-latest
     steps:

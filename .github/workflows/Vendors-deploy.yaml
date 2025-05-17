@@ -54,7 +54,7 @@ jobs:
         done
 
     - name: Trigger deployments
-      run: curl http://kubernetes01:3000/deploy?sha=${{ github.sha }}&imageName=eatup-vendors
+      run: curl "http://kubernetes01:3000/deploy?sha=${{ github.sha }}&imageName=eatup-vendors"
       
 
   deploy_prod:
