@@ -26,6 +26,7 @@ public class RabbitMqConsumer
         await channel.ExchangeDeclareAsync(_exchange, ExchangeType.Fanout);
         await channel.QueueDeclareAsync(_queue, durable: false, exclusive: false, autoDelete: false);
         await channel.QueueBindAsync(_queue, _exchange, "");
+        await channel.QueueBindAsync(_queue, _exchange, _queue);
 
         var consumer = new AsyncEventingBasicConsumer(channel);
 

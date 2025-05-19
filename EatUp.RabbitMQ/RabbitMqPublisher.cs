@@ -28,4 +28,20 @@ public class RabbitMqPublisher : IRabbitMqPublisher
 
         await channel.BasicPublishAsync(_exchangeName, "", false, props, body);
     }
+
+
+    public async Task Publish<T>(T @event, string routingKey) where T : IEvent
+    {
+        using var connection = await _factory.CreateConnectionAsync();
+        using var channel = await connection.CreateChannelAsync();
+
+        await channel.ExchangeDeclareAsync(exchange: _exchangeName, type: ExchangeType.Direct);
+
+        var body = Encoding.UTF8.GetBytes(JsonSerializer.Serialize(@event));
+
+        var props = new BasicProperties();
+        props.Type = typeof(T).Name;
+
+        await channel.BasicPublishAsync(_exchangeName, routingKey, false, props, body);
+    }
 }
