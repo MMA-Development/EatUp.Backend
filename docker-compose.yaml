@@ -39,7 +39,7 @@ services:
     image: ghcr.io/mma-development/eatup-users:${IMAGE_TAG}
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpUsers;User Id=sa;Password=Password!;TrustServerCertificate=True;"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpUsers;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
       VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
       VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
       VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
@@ -63,7 +63,7 @@ services:
     image: ghcr.io/mma-development/eatup-vendors:${IMAGE_TAG}
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpVendors;User Id=sa;Password=Password!;TrustServerCertificate=True;"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpVendors;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
       VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
       VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
       VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
@@ -89,7 +89,7 @@ services:
     image: ghcr.io/mma-development/eatup-orders:${IMAGE_TAG}
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpOrders;User Id=sa;Password=Password!;TrustServerCertificate=True;"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpOrders;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
       VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
       VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
       VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
@@ -113,7 +113,7 @@ services:
     image: ghcr.io/mma-development/eatup-meals:${IMAGE_TAG}
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
-      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpMeals;User Id=sa;Password=Password!;TrustServerCertificate=True;"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpMeals;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
       VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
       VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
       VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
