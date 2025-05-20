@@ -15,6 +15,18 @@ services:
       - eatup_backend
     restart: unless-stopped
 
+  seq:
+    image: datalust/seq:latest
+    container_name: seq
+    ports:
+      - "5341:80"      # HTTP UI and ingestion endpoint
+      - "5342:5342"    # Optional ingestion over secure channel (if enabled)
+    environment:
+      - ACCEPT_EULA=Y
+      - SEQ_API_KEY=your-api-key-here  # Optional: if you use API key auth
+    volumes:
+      - seq-data:/data
+
   mssql:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mssql
@@ -136,6 +148,8 @@ services:
   eatup-gateway:
     image: ghcr.io/mma-development/eatup-gateway:${IMAGE_TAG}
     environment:
+      Seq__Host: ${Seq__Host}
+      Seq__ApiKey: ${Seq__ApiKey}
       ASPNETCORE_ENVIRONMENT: "Development"
       ReverseProxy__Clusters__users__Destinations__destination1__Address: ${ReverseProxy__Clusters__users__Destinations__destination1__Address}
       ReverseProxy__Clusters__vendors__Destinations__destination1__Address: ${ReverseProxy__Clusters__vendors__Destinations__destination1__Address}
@@ -155,6 +169,7 @@ services:
 volumes:
   rabbitmq_data:
   mssql_data:
+  seq-data:
 
 networks:
   eatup_backend:
