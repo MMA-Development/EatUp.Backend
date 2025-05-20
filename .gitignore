@@ -365,4 +365,4 @@ FodyWeavers.xsd
 /EatUp.Users/appsettings.Development.json
 /EatUp.Orders/appsettings.Development.json
 /EatUp.Meals/appsettings.Development.json
-/docker-compose.yaml
+/.env

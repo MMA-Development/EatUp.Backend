@@ -1,0 +1,161 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - eatup_backend
+    restart: unless-stopped
+
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: mssql
+    environment:
+      ACCEPT_EULA: ${ACCEPT_EULA}
+      SA_PASSWORD: ${SA_PASSWORD}
+    volumes:
+      - mssql_data:/var/opt/mssql
+    networks:
+      - eatup_backend
+    restart: unless-stopped
+
+  eatup-spa:
+    image: ghcr.io/mma-development/eatup-spa:${IMAGE_TAG}
+    ports:
+      - "80:80"
+    environment:
+      MY_APP_ENCRYPT_KEY: ${MY_APP_ENCRYPT_KEY}
+      MY_APP_API_BASE_URL: ${MY_APP_API_BASE_URL}
+
+  eatup-users:
+    image: ghcr.io/mma-development/eatup-users:${IMAGE_TAG}
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpUsers;User Id=sa;Password=Password!;TrustServerCertificate=True;"
+      VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
+      VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
+      VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
+      USER_JWT_SECRET: ${USER_JWT_SECRET}
+      USER_JWT_ISSUER: ${USER_JWT_ISSUER}
+      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE}
+      STRIPE_SECRET: ${STRIPE_SECRET}
+      RabbitMQ__Host: ${RabbitMQ__Host}
+      RabbitMQ__Exchange: ${RabbitMQ__Exchange}
+      RabbitMQ__Queue: "users"
+      RabbitMQ__Username: ${RabbitMQ__Username}
+      RabbitMQ__Password: ${RabbitMQ__Password}
+    networks:
+      - eatup_backend
+    depends_on:
+      - mssql
+      - rabbitmq
+    restart: unless-stopped
+
+  eatup-vendors:
+    image: ghcr.io/mma-development/eatup-vendors:${IMAGE_TAG}
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpVendors;User Id=sa;Password=Password!;TrustServerCertificate=True;"
+      VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
+      VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
+      VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
+      USER_JWT_SECRET: ${USER_JWT_SECRET}
+      USER_JWT_ISSUER: ${USER_JWT_ISSUER}
+      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE}
+      STRIPE_SECRET: ${STRIPE_SECRET}
+      StripeSettings__ReturnUrl: "http://example.com"
+      StripeSettings__ReAuth: "http://example.com"
+      RabbitMQ__Host: ${RabbitMQ__Host}
+      RabbitMQ__Exchange: ${RabbitMQ__Exchange}
+      RabbitMQ__Queue: "vendors"
+      RabbitMQ__Username: ${RabbitMQ__Username}
+      RabbitMQ__Password: ${RabbitMQ__Password}
+    networks:
+      - eatup_backend
+    depends_on:
+      - mssql
+      - rabbitmq
+    restart: unless-stopped
+
+  eatup-orders:
+    image: ghcr.io/mma-development/eatup-orders:${IMAGE_TAG}
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpOrders;User Id=sa;Password=Password!;TrustServerCertificate=True;"
+      VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
+      VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
+      VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
+      USER_JWT_SECRET: ${USER_JWT_SECRET}
+      USER_JWT_ISSUER: ${USER_JWT_ISSUER}
+      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE}
+      STRIPE_SECRET: ${STRIPE_SECRET}
+      RabbitMQ__Host: ${RabbitMQ__Host}
+      RabbitMQ__Exchange: ${RabbitMQ__Exchange}
+      RabbitMQ__Queue: "orders"
+      RabbitMQ__Username: ${RabbitMQ__Username}
+      RabbitMQ__Password: ${RabbitMQ__Password}
+    networks:
+      - eatup_backend
+    depends_on:
+      - mssql
+      - rabbitmq
+    restart: unless-stopped
+
+  eatup-meals:
+    image: ghcr.io/mma-development/eatup-meals:${IMAGE_TAG}
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpMeals;User Id=sa;Password=Password!;TrustServerCertificate=True;"
+      VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
+      VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
+      VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
+      USER_JWT_SECRET: ${USER_JWT_SECRET}
+      USER_JWT_ISSUER: ${USER_JWT_ISSUER}
+      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE}
+      STRIPE_SECRET: ${STRIPE_SECRET}
+      RabbitMQ__Host: ${RabbitMQ__Host}
+      RabbitMQ__Exchange: ${RabbitMQ__Exchange}
+      RabbitMQ__Queue: "meals"
+      RabbitMQ__Username: ${RabbitMQ__Username}
+      RabbitMQ__Password: ${RabbitMQ__Password}
+    networks:
+      - eatup_backend
+    depends_on:
+      - mssql
+      - rabbitmq
+    restart: unless-stopped
+
+  eatup-gateway:
+    image: ghcr.io/mma-development/eatup-gateway:${IMAGE_TAG}
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ReverseProxy__Clusters__users__Destinations__destination1__Address: ${ReverseProxy__Clusters__users__Destinations__destination1__Address}
+      ReverseProxy__Clusters__vendors__Destinations__destination1__Address: ${ReverseProxy__Clusters__vendors__Destinations__destination1__Address}
+      ReverseProxy__Clusters__orders__Destinations__destination1__Address: ${ReverseProxy__Clusters__orders__Destinations__destination1__Address}
+      ReverseProxy__Clusters__meals__Destinations__destination1__Address: ${ReverseProxy__Clusters__meals__Destinations__destination1__Address}
+    ports:
+      - "8080:8080"
+    networks:
+      - eatup_backend
+    depends_on:
+      - eatup-users
+      - eatup-vendors
+      - eatup-orders
+      - eatup-meals
+    restart: unless-stopped
+
+volumes:
+  rabbitmq_data:
+  mssql_data:
+
+networks:
+  eatup_backend:
+    driver: bridge
