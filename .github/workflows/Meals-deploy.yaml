@@ -31,7 +31,7 @@ jobs:
 
     - name: Build and Push Docker image to GHCR
       run: |
-        IMAGE_NAME=ghcr.io/mma-development/eatup-meals:latest
+        IMAGE_NAME=ghcr.io/mma-development/eatup-meals:${{github.sha}}
         docker build -f EatUp.Meals/Dockerfile -t $IMAGE_NAME .
         docker push $IMAGE_NAME
 
@@ -72,7 +72,7 @@ jobs:
         resourceGroup: EatUp
         containerAppName: eatup-meals
         containerAppEnvironment: EatUp
-        imageToDeploy: ghcr.io/mma-development/eatup-meals:latest
+        imageToDeploy: ghcr.io/mma-development/eatup-meals:${{github.sha}}
         registryUrl: ghcr.io
         registryUsername: ${{ secrets.GHCR_USERNAME }}
         registryPassword: ${{ secrets.GHCR_PAT }}
