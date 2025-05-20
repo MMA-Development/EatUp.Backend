@@ -24,7 +24,7 @@ public class RabbitMqConsumer
         var channel = await connection.CreateChannelAsync();
 
         await channel.ExchangeDeclareAsync(_exchange, ExchangeType.Fanout);
-        await channel.QueueDeclareAsync(_queue, durable: false, exclusive: false, autoDelete: false);
+        await channel.QueueDeclareAsync(_queue, durable: true, exclusive: false, autoDelete: false);
         await channel.QueueBindAsync(_queue, _exchange, "");
         await channel.QueueBindAsync(_queue, _exchange, _queue);
 
@@ -35,14 +35,24 @@ public class RabbitMqConsumer
             Console.WriteLine("Message received");
             var body = Encoding.UTF8.GetString(args.Body.ToArray());
             var eventType = args.BasicProperties.Type ?? Encoding.UTF8.GetString((byte[])args.BasicProperties.Headers["Type"]);
-            
+
             var eventObj = _dispatcher.DeserializeEvent(body, eventType);
             if (eventObj is not null)
             {
-                await _dispatcher.DispatchAsync(eventObj);
+                try
+                {
+                    await _dispatcher.DispatchAsync(eventObj);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error dispatching event: {ex.Message}");
+                    await channel.BasicNackAsync(args.DeliveryTag, false, true);
+                    return;
+                }
             }
+            await channel.BasicAckAsync(args.DeliveryTag, false);
         };
 
-        await channel.BasicConsumeAsync(queue: _queue, autoAck: true, consumer: consumer);
+        await channel.BasicConsumeAsync(queue: _queue, autoAck: false, consumer: consumer);
     }
 }
