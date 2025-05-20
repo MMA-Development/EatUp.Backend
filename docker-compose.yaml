@@ -6,6 +6,7 @@ services:
     container_name: rabbitmq
     ports:
       - "15672:15672" # Management UI
+      - "5672:5672"
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
@@ -53,13 +54,13 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpUsers;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
-      VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
-      VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
-      VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
-      USER_JWT_SECRET: ${USER_JWT_SECRET}
-      USER_JWT_ISSUER: ${USER_JWT_ISSUER}
-      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE}
-      STRIPE_SECRET: ${STRIPE_SECRET}
+      VendorJwt__Secret: ${VENDOR_JWT_SECRET}
+      VendorJwt__Issuer: ${VENDOR_JWT_ISSUER}
+      VendorJwt__Audience: ${VENDOR_JWT_AUDIENCE}
+      UserJwt__Secret: ${USER_JWT_SECRET}
+      UserJwt__Issuer: ${USER_JWT_ISSUER}
+      UserJwt__Audience: ${USER_JWT_AUDIENCE}
+      StripeSettings__Secret: ${STRIPE_SECRET}
       RabbitMQ__Host: ${RabbitMQ__Host}
       RabbitMQ__Exchange: ${RabbitMQ__Exchange}
       RabbitMQ__Queue: "users"
@@ -77,13 +78,13 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpVendors;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
-      VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
-      VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
-      VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
-      USER_JWT_SECRET: ${USER_JWT_SECRET}
-      USER_JWT_ISSUER: ${USER_JWT_ISSUER}
-      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE}
-      STRIPE_SECRET: ${STRIPE_SECRET}
+      VendorJwt__Secret: ${VENDOR_JWT_SECRET}
+      VendorJwt__Issuer: ${VENDOR_JWT_ISSUER}
+      VendorJwt__Audience: ${VENDOR_JWT_AUDIENCE}
+      UserJwt__Secret: ${USER_JWT_SECRET}
+      UserJwt__Issuer: ${USER_JWT_ISSUER}
+      UserJwt__Audience: ${USER_JWT_AUDIENCE}
+      StripeSettings__Secret: ${STRIPE_SECRET}
       StripeSettings__ReturnUrl: "http://example.com"
       StripeSettings__ReAuth: "http://example.com"
       RabbitMQ__Host: ${RabbitMQ__Host}
@@ -103,13 +104,13 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpOrders;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
-      VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
-      VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
-      VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
-      USER_JWT_SECRET: ${USER_JWT_SECRET}
-      USER_JWT_ISSUER: ${USER_JWT_ISSUER}
-      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE}
-      STRIPE_SECRET: ${STRIPE_SECRET}
+      VendorJwt__Secret: ${VENDOR_JWT_SECRET}
+      VendorJwt__Issuer: ${VENDOR_JWT_ISSUER}
+      VendorJwt__Audience: ${VENDOR_JWT_AUDIENCE}
+      UserJwt__Secret: ${USER_JWT_SECRET}
+      UserJwt__Issuer: ${USER_JWT_ISSUER}
+      UserJwt__Audience: ${USER_JWT_AUDIENCE}
+      StripeSettings__Secret: ${STRIPE_SECRET}
       RabbitMQ__Host: ${RabbitMQ__Host}
       RabbitMQ__Exchange: ${RabbitMQ__Exchange}
       RabbitMQ__Queue: "orders"
@@ -127,13 +128,13 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpMeals;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
-      VENDOR_JWT_SECRET: ${VENDOR_JWT_SECRET}
-      VENDOR_JWT_ISSUER: ${VENDOR_JWT_ISSUER}
-      VENDOR_JWT_AUDIENCE: ${VENDOR_JWT_AUDIENCE}
-      USER_JWT_SECRET: ${USER_JWT_SECRET}
-      USER_JWT_ISSUER: ${USER_JWT_ISSUER}
-      USER_JWT_AUDIENCE: ${USER_JWT_AUDIENCE}
-      STRIPE_SECRET: ${STRIPE_SECRET}
+      VendorJwt__Secret: ${VENDOR_JWT_SECRET}
+      VendorJwt__Issuer: ${VENDOR_JWT_ISSUER}
+      VendorJwt__Audience: ${VENDOR_JWT_AUDIENCE}
+      UserJwt__Secret: ${USER_JWT_SECRET}
+      UserJwt__Issuer: ${USER_JWT_ISSUER}
+      UserJwt__Audience: ${USER_JWT_AUDIENCE}
+      StripeSettings__Secret: ${STRIPE_SECRET}
       RabbitMQ__Host: ${RabbitMQ__Host}
       RabbitMQ__Exchange: ${RabbitMQ__Exchange}
       RabbitMQ__Queue: "meals"
@@ -147,9 +148,9 @@ services:
     restart: unless-stopped
 
   eatup-gateway:
-    image: ghcr.io/mma-development/eatup-gateway:${IMAGE_TAG}
+    image: ghcr.io/mma-development/eatup-gateway:${GATEWAY_IMAGE_TAG}
     environment:
-      Seq__Host: ${Seq__Host}
+      Seq__ServerUrl: ${Seq__Host}
       Seq__ApiKey: ${Seq__ApiKey}
       ASPNETCORE_ENVIRONMENT: "Development"
       ReverseProxy__Clusters__users__Destinations__destination1__Address: ${ReverseProxy__Clusters__users__Destinations__destination1__Address}
