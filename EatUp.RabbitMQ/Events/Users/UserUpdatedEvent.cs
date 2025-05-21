@@ -10,5 +10,6 @@ namespace EatUp.RabbitMQ.Events.Users
     {
         public Guid Id { get; set; }
         public string Fullname { get; set; }
+        public object Email { get; set; }
     }
 }
