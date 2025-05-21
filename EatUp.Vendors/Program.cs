@@ -1,4 +1,7 @@
 using System.Text;
+using EatUp.RabbitMQ;
+using EatUp.RabbitMQ.Events.Vendor;
+using EatUp.Vendors.EventHandlers;
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Repositories;
 using EatUp.Vendors.Services;
@@ -104,6 +107,7 @@ builder.Services.AddDbContext<Context>(options =>
 builder.Services.AddTransient<IRepository<Vendor>, Repository<Vendor>>();
 builder.Services.AddTransient<IRepository<RefreshTokenInformation>, Repository<RefreshTokenInformation>>();
 builder.Services.AddTransient<IVendorservice, Vendorservice>();
+builder.Services.AddTransient<IEventHandler<PerformVendorHardResyncEvent>, PerformVendorHardResyncEventHandler>();
 builder.Services.AddSingleton<IRabbitMqPublisher>(x => 
     new RabbitMqPublisher(
         builder.Configuration["RabbitMQ:Host"], 

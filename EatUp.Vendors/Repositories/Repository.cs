@@ -90,5 +90,10 @@ namespace EatUp.Vendors.Repositories
                 .Select(mapper)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<IQueryable<TEntity>> GetAll(bool tracking = false)
+        {
+            return _context.GetQuery<TEntity>(tracking).IgnoreQueryFilters();
+        }
     }
 }

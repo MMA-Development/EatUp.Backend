@@ -13,5 +13,11 @@ namespace EatUp.Vendors.Repositories
         Task Save();
         Task<TEntity?> GetByExpression(Expression<Func<TEntity, bool>> query, bool tracking = false, params Expression<Func<TEntity, object>>[] includes);
         Task<PaginationResult<TTo>> GetPage<TTo>(int skip, int take, Expression<Func<TEntity, TTo>> mapper, Expression<Func<TEntity, bool>>? filter = null, bool tracking = false, string? orderBy = null, bool ascending = false);
+
+        /// <summary>
+        /// Get all entities of type TEntity, excludes the filters.
+        /// </summary>
+        /// <returns></returns>
+        Task<IQueryable<TEntity>> GetAll(bool tracking = false);
     }
 }
