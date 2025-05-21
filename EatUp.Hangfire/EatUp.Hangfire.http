@@ -1,0 +1,6 @@
+@EatUp.Hangfire_HostAddress = http://localhost:5142
+
+GET {{EatUp.Hangfire_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
