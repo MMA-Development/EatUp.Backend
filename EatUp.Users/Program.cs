@@ -1,4 +1,7 @@
 using System.Text;
+using EatUp.RabbitMQ;
+using EatUp.RabbitMQ.Events.Users;
+using EatUp.Users.EventHandlers;
 using EatUp.Users.Models;
 using EatUp.Users.Repositories;
 using EatUp.Users.Services;
@@ -101,8 +104,27 @@ builder.Services.AddTransient<IRepository<User>, Repository<User>>();
 builder.Services.AddTransient<IRepository<RefreshTokenInformation>, Repository<RefreshTokenInformation>>();
 builder.Services.AddTransient<IUserService, UserService>();
 
-var app = builder.Build();
+//EventHandlers
+builder.Services.AddSingleton<EventDispatcher>();
+builder.Services.AddTransient<IEventHandler<PerformUserHardResyncEvent>, PerformUserHardResyncEventHandler>();
 
+builder.Services.AddSingleton<IRabbitMqPublisher>(x =>
+    new RabbitMqPublisher(
+        builder.Configuration["RabbitMQ:Host"],
+        "events",
+        builder.Configuration["RabbitMQ:Username"],
+        builder.Configuration["RabbitMQ:Password"]
+    ));
+var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
+    dbContext.Database.Migrate();
+
+    var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
+    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "orders", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher);
+    await consumer.Start();
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

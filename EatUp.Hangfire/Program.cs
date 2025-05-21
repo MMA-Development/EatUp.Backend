@@ -29,10 +29,7 @@ var app = builder.Build();
 
 app.UseHangfireDashboard();
 
-RecurringJob.AddOrUpdate<PerformVendorHardResyncJob>(
-    PerformVendorHardResyncJob.JobId,
-    x => x.ExecuteAsync(),
-    Cron.Never);
+ConfigureJobs.Configure(app);
 
 app.Run();
 

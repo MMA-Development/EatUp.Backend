@@ -77,5 +77,10 @@ namespace EatUp.Users.Repositories
         {
             return await _context.GetQuery(tracking, includes).FirstOrDefaultAsync(query);
         }
+
+        public async Task<IQueryable<TEntity>> GetAll(bool tracking = false)
+        {
+            return  _context.GetQuery<TEntity>(tracking).IgnoreQueryFilters();
+        }
     }
 }

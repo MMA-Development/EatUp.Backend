@@ -13,5 +13,12 @@ namespace EatUp.Users.Repositories
         Task<bool> Exist(Expression<Func<TEntity, bool>> query);
         Task Save();
         Task<TEntity?> GetByExpression(Expression<Func<TEntity, bool>> query, bool tracking = false, params Expression<Func<TEntity, object>>[] includes);
+
+        /// <summary>
+        /// Get all entities of type TEntity, excludes the filters.
+        /// </summary>
+        /// <param name="tracking"></param>
+        /// <returns></returns>
+        Task<IQueryable<TEntity>> GetAll(bool tracking = false);
     }
 }

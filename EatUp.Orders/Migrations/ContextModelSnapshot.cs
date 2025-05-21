@@ -82,6 +82,34 @@ namespace EatUp.Orders.Migrations
                     b.ToTable("Orders");
                 });
 
+            modelBuilder.Entity("EatUp.Orders.Models.UserProjection", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Fullname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserProjections");
+                });
+
             modelBuilder.Entity("EatUp.Orders.Models.VendorProjection", b =>
                 {
                     b.Property<Guid>("Id")

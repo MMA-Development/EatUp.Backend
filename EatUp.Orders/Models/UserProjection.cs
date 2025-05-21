@@ -5,7 +5,7 @@ namespace EatUp.Orders.Models
     public class UserProjection: BaseEntity
     {
         public string Fullname { get; set; }
-        public object Email { get; private set; }
+        public string Email { get; private set; }
 
         internal static UserProjection FromCreatedEvent(UserCreatedEvent @event)
         {
@@ -15,6 +15,25 @@ namespace EatUp.Orders.Models
                 Id = @event.Id,
                 Email = @event.Email
             };
+        }
+
+        internal static UserProjection FromHardResyncEvent(UserHardResyncEvent @event) => new UserProjection()
+        {
+            CreatedAt = @event.CreatedAt,
+            DeletedAt = @event.DeletedAt,
+            UpdatedAt = @event.UpdatedAt,
+            Fullname = @event.Fullname,
+            Id = @event.Id,
+            Email = @event.Email
+        };
+
+        internal static void HardResync(UserProjection projection, UserHardResyncEvent @event)
+        {
+            projection.Fullname = @event.Fullname;
+            projection.Email = @event.Email;
+            projection.CreatedAt = @event.CreatedAt;
+            projection.DeletedAt = @event.DeletedAt;
+            projection.UpdatedAt = @event.UpdatedAt;
         }
 
         internal static void MergeUpdatedEvent(UserProjection existing, UserUpdatedEvent @event)

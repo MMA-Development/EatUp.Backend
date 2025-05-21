@@ -123,6 +123,7 @@ builder.Services.AddTransient<IEventHandler<VendorHardResyncEvent>, VendorHardRe
 builder.Services.AddTransient<IEventHandler<UserCreatedEvent>, UserCreatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<UserDeletedEvent>, UserDeletedEventHandler>();
 builder.Services.AddTransient<IEventHandler<UserUpdatedEvent>, UserUpdatedEventHandler>();
+builder.Services.AddTransient<IEventHandler<UserHardResyncEvent>, UserHardResyncEventHandler>();
 
 var app = builder.Build();
 
