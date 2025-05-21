@@ -41,9 +41,15 @@ namespace EatUp.Meals.Repositories
             return result;
         }
 
-        public async Task<TEntity?> GetById(Guid id, bool tracking = false, params Expression<Func<TEntity, object>>[] includes)
+        public async Task<TEntity?> GetById(Guid id, bool tracking = false, bool ignoreFilters = false, params Expression<Func<TEntity, object>>[] includes)
         {
-            return await _context.GetQuery(tracking, includes).FirstOrDefaultAsync(e => e.Id == id);
+            var query = _context.GetQuery(tracking, includes);
+            if (ignoreFilters)
+            {
+                query = query.IgnoreQueryFilters();
+            }
+
+            return await query.FirstOrDefaultAsync(e => e.Id == id);
         }
 
         public async Task<TTo?> GetById<TTo>(Guid id, Expression<Func<TEntity, TTo>> mapper, bool tracking = false, params Expression<Func<TEntity, object>>[] includes)

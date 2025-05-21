@@ -5,7 +5,7 @@ namespace EatUp.Meals.Repositories
 {
     public interface IRepository<TEntity> where TEntity : BaseEntity
     {
-        Task<TEntity> GetById(Guid id, bool tracking = false, params Expression<Func<TEntity, object>>[] includes);
+        Task<TEntity> GetById(Guid id, bool tracking = false, bool ignoreFilters = false, params Expression<Func<TEntity, object>>[] includes);
         Task<TEntity> Insert(TEntity entity);
         Task Delete(Guid id);
         Task Save();

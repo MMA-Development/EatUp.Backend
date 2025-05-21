@@ -119,6 +119,7 @@ builder.Services.AddSingleton<EventDispatcher>();
 builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorUpdatedEvent>, VendorUpdatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorDeletedEvent>, VendorDeletedEventHandler>();
+builder.Services.AddTransient<IEventHandler<VendorHardResyncEvent>, VendorHardResyncEventHandler>();
 
 builder.Services.AddTransient<IEventHandler<PerformMealHardResyncEvent>, PerformMealHardResyncEventHandler>();
 

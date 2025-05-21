@@ -32,5 +32,30 @@ namespace EatUp.Meals.Models
                 }
             };
         }
+
+        internal static VendorProjection FromVendorHardResyncEvent(VendorHardResyncEvent @event) => new()
+        {
+            CreatedAt = @event.CreatedAt,
+            DeletedAt = @event.DeletedAt,
+            Id = @event.Id,
+            Name = @event.Name,
+            Location = new Point(@event.Longitude, @event.Latitude)
+            {
+                SRID = 4326
+            },
+            UpdatedAt = @event.UpdatedAt
+        };
+
+        internal static void HardResync(VendorProjection projection, VendorHardResyncEvent @event)
+        {
+            projection.Name = @event.Name;
+            projection.Location = new Point(@event.Longitude, @event.Latitude)
+            {
+                SRID = 4326
+            };
+            projection.UpdatedAt = @event.UpdatedAt;
+            projection.DeletedAt = @event.DeletedAt;
+            projection.CreatedAt = @event.CreatedAt;
+        }
     }
 }
