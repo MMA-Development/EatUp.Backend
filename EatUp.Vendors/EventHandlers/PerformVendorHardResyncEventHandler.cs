@@ -8,14 +8,14 @@ namespace EatUp.Vendors.EventHandlers
 {
     public class PerformVendorHardResyncEventHandler(IRabbitMqPublisher publisher, IRepository<Vendor> repository) : IEventHandler<PerformVendorHardResyncEvent>
     {
-        public async Task HandleAsync(PerformVendorHardResyncEvent @event)
+        public async Task HandleAsync(PerformVendorHardResyncEvent _)
         {
             var vendors = await (await repository.GetAll()).ToArrayAsync();
             
             foreach (Vendor vendor in vendors)
             {
-                var vendorEvent = ToEvent(vendor);
-                await publisher.Publish(vendorEvent);
+                var @event = ToEvent(vendor);
+                await publisher.Publish(@event);
             }
         }
 

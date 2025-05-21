@@ -8,6 +8,7 @@ namespace EatUp.Hangfire.Jobs
         {
             RecurringJob.AddOrUpdate<PerformVendorHardResyncJob>(PerformVendorHardResyncJob.JobId, job => job.ExecuteAsync(), Cron.Never);
             RecurringJob.AddOrUpdate<PerformUserHardResyncJob>(PerformUserHardResyncJob.JobId, job => job.ExecuteAsync(), Cron.Never);
+            RecurringJob.AddOrUpdate<PerformMealHardResyncJob>(PerformMealHardResyncJob.JobId, job => job.ExecuteAsync(), Cron.Never);
         }
     }
 }

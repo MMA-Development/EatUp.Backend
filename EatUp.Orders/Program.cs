@@ -5,6 +5,7 @@ using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
 using EatUp.Orders.Services;
 using EatUp.RabbitMQ;
+using EatUp.RabbitMQ.Events.Meals;
 using EatUp.RabbitMQ.Events.Users;
 using EatUp.RabbitMQ.Events.Vendor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -107,9 +108,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 builder.Services.AddTransient<IBaseRepository<Order>, Repository<Order>>();
 builder.Services.AddTransient<IBaseRepository<VendorProjection>, Repository<VendorProjection>>();
 builder.Services.AddTransient<IBaseRepository<UserProjection>, Repository<UserProjection>>();
+builder.Services.AddTransient<IBaseRepository<MealProjection>, Repository<MealProjection>>();
+
 builder.Services.AddTransient<IOrderService, OrderService>();
 
 //Event Handlers
@@ -124,6 +128,8 @@ builder.Services.AddTransient<IEventHandler<UserCreatedEvent>, UserCreatedEventH
 builder.Services.AddTransient<IEventHandler<UserDeletedEvent>, UserDeletedEventHandler>();
 builder.Services.AddTransient<IEventHandler<UserUpdatedEvent>, UserUpdatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<UserHardResyncEvent>, UserHardResyncEventHandler>();
+
+builder.Services.AddTransient<IEventHandler<MealHardResyncEvent>, MealHardResyncEventHandler>();
 
 var app = builder.Build();
 

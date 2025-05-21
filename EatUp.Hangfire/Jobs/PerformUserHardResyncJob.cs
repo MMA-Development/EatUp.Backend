@@ -3,7 +3,7 @@ using EatUp.RabbitMQ.Events.Vendor;
 
 namespace EatUp.Hangfire.Jobs
 {
-    public class PerformUserHardResyncJob(IRabbitMqPublisher publisher)
+    public class PerformUserHardResyncJob(IRabbitMqPublisher publisher): IJob
     {
         public static string JobId => "PerformUserHardResyncJob";
 

@@ -2,7 +2,7 @@
 
 namespace EatUp.Hangfire.Jobs
 {
-    public class PerformVendorHardResyncJob(IRabbitMqPublisher publisher)
+    public class PerformVendorHardResyncJob(IRabbitMqPublisher publisher): IJob
     {
         public static string JobId => "PerformVendorHardResyncJob";
 

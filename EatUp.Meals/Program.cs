@@ -4,6 +4,7 @@ using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
 using EatUp.Meals.Services;
 using EatUp.RabbitMQ;
+using EatUp.RabbitMQ.Events.Meals;
 using EatUp.RabbitMQ.Events.Vendor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -118,6 +119,16 @@ builder.Services.AddSingleton<EventDispatcher>();
 builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorUpdatedEvent>, VendorUpdatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorDeletedEvent>, VendorDeletedEventHandler>();
+
+builder.Services.AddTransient<IEventHandler<PerformMealHardResyncEvent>, PerformMealHardResyncEventHandler>();
+
+builder.Services.AddSingleton<IRabbitMqPublisher>(x =>
+    new RabbitMqPublisher(
+        builder.Configuration["RabbitMQ:Host"],
+        "events",
+        builder.Configuration["RabbitMQ:Username"],
+        builder.Configuration["RabbitMQ:Password"]
+    ));
 
 var app = builder.Build();
 

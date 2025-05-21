@@ -87,5 +87,10 @@ namespace EatUp.Meals.Repositories
         {
             return _context.GetQuery(tracking, includes);
         }
+
+        public async Task<IQueryable<TEntity>> GetAll(bool tracking = false)
+        {
+            return _context.GetQuery<TEntity>(tracking).IgnoreQueryFilters();
+        }
     }
 }

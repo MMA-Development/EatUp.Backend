@@ -17,6 +17,8 @@ namespace EatUp.Orders.Models
 
         public DbSet<UserProjection> UserProjections { get; set; }
 
+        public DbSet<MealProjection> MealProjections { get; set; }
+
         public override int SaveChanges()
         {
             var entries = ChangeTracker.Entries()
