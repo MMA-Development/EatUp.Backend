@@ -22,15 +22,15 @@ namespace EatUp.Vendors.Models
             foreach (var entry in entries)
             {
                 BaseEntity entity = (BaseEntity)entry.Entity;
-
-                entity.UpdatedAt = DateTime.UtcNow;
+                var now = DateTime.UtcNow;
+                entity.UpdatedAt = now;
                 if (entry.State == EntityState.Added)
                 {
-                    entity.CreatedAt = DateTime.UtcNow;
+                    entity.CreatedAt = now;
                 }
                 else if (entry.State == EntityState.Deleted)
                 {
-                    entity.DeletedAt = DateTime.UtcNow;
+                    entity.DeletedAt = now;
                     entry.State = EntityState.Modified;
                 }
             }

@@ -107,11 +107,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddTransient<IBaseRepository<Order>, Repository<Order>>();
+builder.Services.AddTransient<IBaseRepository<VendorProjection>, Repository<VendorProjection>>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 
 //Event Handlers
 builder.Services.AddSingleton<EventDispatcher>();
-builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedHandler>();
+builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedEventHandler>();
+builder.Services.AddTransient<IEventHandler<VendorUpdatedEvent>, VendorUpdatedEventHandler>();
+builder.Services.AddTransient<IEventHandler<VendorDeletedEvent>, VendorDeletedEventHandler>();
 
 var app = builder.Build();
 
