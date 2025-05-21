@@ -8,6 +8,11 @@ namespace EatUp.Orders.Models
 
         public string Description { get; set; }
 
+        internal static MealProjection FromCreatedEvent(MealCreatedEvent @event)
+        {
+            throw new NotImplementedException();
+        }
+
         internal static MealProjection FromHardResyncEvent(MealHardResyncEvent @event) => new()
         {
             Title = @event.Title,
@@ -25,6 +30,12 @@ namespace EatUp.Orders.Models
             existing.UpdatedAt = @event.UpdatedAt;
             existing.DeletedAt = @event.DeletedAt;
             existing.CreatedAt = @event.CreatedAt;
+        }
+
+        internal static void Update(MealProjection existing, MealUpdatedEvent @event)
+        {
+            existing.Title = @event.Title;
+            existing.Description = @event.Description;
         }
     }
 }

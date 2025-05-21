@@ -119,17 +119,20 @@ builder.Services.AddTransient<IOrderService, OrderService>();
 //Event Handlers
 builder.Services.AddSingleton<EventDispatcher>();
 
+builder.Services.AddTransient<IEventHandler<VendorHardResyncEvent>, VendorHardResyncEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorUpdatedEvent>, VendorUpdatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorDeletedEvent>, VendorDeletedEventHandler>();
-builder.Services.AddTransient<IEventHandler<VendorHardResyncEvent>, VendorHardResyncEventHandler>();
 
+builder.Services.AddTransient<IEventHandler<UserHardResyncEvent>, UserHardResyncEventHandler>();
 builder.Services.AddTransient<IEventHandler<UserCreatedEvent>, UserCreatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<UserDeletedEvent>, UserDeletedEventHandler>();
 builder.Services.AddTransient<IEventHandler<UserUpdatedEvent>, UserUpdatedEventHandler>();
-builder.Services.AddTransient<IEventHandler<UserHardResyncEvent>, UserHardResyncEventHandler>();
 
 builder.Services.AddTransient<IEventHandler<MealHardResyncEvent>, MealHardResyncEventHandler>();
+builder.Services.AddTransient<IEventHandler<MealCreatedEvent>, MealCreatedEventHandler>();
+builder.Services.AddTransient<IEventHandler<MealUpdatedEvent>, MealUpdatedEventHandler>();
+builder.Services.AddTransient<IEventHandler<MealDeletedEvent>, MealDeletedEventHandler>();
 
 var app = builder.Build();
 

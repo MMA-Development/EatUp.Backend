@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace EatUp.RabbitMQ.Events.Meals
 {
-    public class MealDeletedEvent: IEvent
+    public class MealDeletedEvent(Guid id): IEvent
     {
+        public Guid Id { get; set; } = id;
     }
 }
