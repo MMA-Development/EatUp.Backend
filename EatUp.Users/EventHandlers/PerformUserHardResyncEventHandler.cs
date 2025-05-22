@@ -9,9 +9,11 @@ namespace EatUp.Users.EventHandlers
     {
         public async Task HandleAsync(PerformUserHardResyncEvent _)
         {
+            Console.WriteLine("Performing hard resync for all users...");
             var allUsers = (await repository.GetAll()).ToArray();
             foreach (var user in allUsers)
             {
+                Console.WriteLine($"Resyncing user: {user.Id}");
                 var @event = ToEvent(user);
                 await publisher.Publish(@event);
             }

@@ -9,6 +9,7 @@ namespace EatUp.Meals.EventHandlers
     {
         public async Task HandleAsync(PerformMealHardResyncEvent _)
         {
+            Console.WriteLine("Performing hard resync for all meals...");
             var allMeals = (await repository.GetAll()).ToArray();
             foreach (var meal in allMeals)
             {
