@@ -4,7 +4,6 @@ namespace EatUp.Meals.DTO
 {
     public class AddMealDTO
     {
-        public string VendorName { get; set; } = null!;
         public string Title { get; set; } = null!;
         public float OriginalPrice { get; set; }
         public float Price { get; set; }
@@ -15,12 +14,12 @@ namespace EatUp.Meals.DTO
         public DateTime FirstAvailablePickup { get; set; }
         public DateTime LastAvailablePickup { get; set; }
 
-        internal Meal ToMeal(Guid vendorId)
+        internal Meal ToMeal(Guid vendorId, string vendorName)
         {
             return new Meal
             {
                 VendorId = vendorId,
-                VendorName = VendorName,
+                VendorName = vendorName,
                 Title = Title,
                 OriginalPrice = OriginalPrice,
                 Price = Price,

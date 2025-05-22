@@ -6,6 +6,7 @@ namespace EatUp.Orders.Models
     {
         public string Fullname { get; set; }
         public string Email { get; private set; }
+        public string? StripeCustomerId { get; internal set; }
 
         internal static UserProjection FromCreatedEvent(UserCreatedEvent @event)
         {
@@ -13,7 +14,8 @@ namespace EatUp.Orders.Models
             {
                 Fullname = @event.Fullname,
                 Id = @event.Id,
-                Email = @event.Email
+                Email = @event.Email,
+                StripeCustomerId = @event.StripeCustomerId,
             };
         }
 
@@ -24,7 +26,8 @@ namespace EatUp.Orders.Models
             UpdatedAt = @event.UpdatedAt,
             Fullname = @event.Fullname,
             Id = @event.Id,
-            Email = @event.Email
+            Email = @event.Email,
+            StripeCustomerId = @event.StripeCustomerId,
         };
 
         internal static void HardResync(UserProjection projection, UserHardResyncEvent @event)
@@ -34,12 +37,14 @@ namespace EatUp.Orders.Models
             projection.CreatedAt = @event.CreatedAt;
             projection.DeletedAt = @event.DeletedAt;
             projection.UpdatedAt = @event.UpdatedAt;
+            projection.StripeCustomerId = @event.StripeCustomerId;
         }
 
         internal static void MergeUpdatedEvent(UserProjection existing, UserUpdatedEvent @event)
         {
             existing.Fullname = @event.Fullname;
             existing.Email = @event.Email;
+            existing.StripeCustomerId = @event.StripeCustomerId;
         }
     }
 }

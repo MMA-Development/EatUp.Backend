@@ -8,12 +8,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EatUp.Meals.Services
 {
-    public class MealService(IRepository<Meal> repository, IRabbitMqPublisher publisher) : IMealService
+    public class MealService(
+        IRepository<Meal> repository,
+        IRepository<VendorProjection> vendorProjections,
+        IRabbitMqPublisher publisher) : IMealService
     {
         public async Task<Guid> AddMeal(Guid vendorId, AddMealDTO addMealDTO)
         {
-            Meal meal = addMealDTO.ToMeal(vendorId);
-            EnsureMeal(meal);
+            var vendor = await vendorProjections.GetById(vendorId);
+            EnsureMeal(addMealDTO, vendor);
+            Meal meal = addMealDTO.ToMeal(vendorId, vendor.Name);
             await repository.Insert(meal);
             await repository.Save();
             var mealCreatedEvent = ToMealCreatedEvent(meal);
@@ -51,8 +55,10 @@ namespace EatUp.Meals.Services
             return filters.AndAll();
         }
 
-        public void EnsureMeal(Meal meal)
+        private void EnsureMeal(AddMealDTO meal, VendorProjection vendor)
         {
+            ArgumentNullException.ThrowIfNull(meal);
+            ArgumentNullException.ThrowIfNull(vendor);
             if (meal.LastAvailablePickup < DateTime.UtcNow)
             {
                 throw new ArgumentException("Last available pickup time cannot be in the past.");

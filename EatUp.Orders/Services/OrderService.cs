@@ -59,7 +59,7 @@ namespace EatUp.Orders.Services
 
             EnsureOrder(request, meal, vendor, user);
             
-            var order = request.ToOrder(meal.Title, user.Fullname, vendor.Name);
+            var order = request.ToOrder(meal.Title, user, vendor.Name);
             
             await repository.Insert(order);
             await repository.Save();
