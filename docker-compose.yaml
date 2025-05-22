@@ -53,10 +53,10 @@ services:
     image: ghcr.io/mma-development/eatup-hangfire:${USERS_IMAGE_TAG}
     environment:
      ASPNETCORE_ENVIRONMENT: "Development"
-     ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpHangfire;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+     ConnectionStrings__HangfireConnection: "Server=mssql;Database=EatUpHangfire;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
      RabbitMQ__Host: ${RabbitMQ__Host}
      RabbitMQ__Exchange: ${RabbitMQ__Exchange}
-     RabbitMQ__Queue: "users"
+     RabbitMQ__Queue: "hangfire"
      RabbitMQ__Username: ${RabbitMQ__Username}
      RabbitMQ__Password: ${RabbitMQ__Password}
     networks:
