@@ -12,6 +12,7 @@
         public float Price { get; internal set; }
         public string StripeCustomerId { get; set; }
         public int Quantity { get; internal set; }
+        public string VendorName { get; internal set; }
     }
 
     public enum PaymentStatusEnum

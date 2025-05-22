@@ -4,10 +4,14 @@ using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
 using Stripe;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace EatUp.Orders.Services
 {
-    public class OrderService(IBaseRepository<Order> repository) : IOrderService
+    public class OrderService(IBaseRepository<Order> repository, 
+        IBaseRepository<MealProjection> mealProjections, 
+        IBaseRepository<UserProjection> userProjections, 
+        IBaseRepository<VendorProjection> vendorProjections) : IOrderService
     {
         public async Task<PaginationResult<OrderDTO>> GetPageForVendor(OrdersForVendorParams @params, Guid vendorId)
         {
@@ -34,20 +38,12 @@ namespace EatUp.Orders.Services
             return expressions.AndAll();
         }
 
-        public void EnsureOrder(CreateOrderRequest order)
+        private void EnsureOrder(CreateOrderRequest order, MealProjection meal, VendorProjection vendor, UserProjection user)
         {
-            if (order == null)
-            {
-                throw new ArgumentNullException(nameof(order));
-            }
-            if (order.UserId == Guid.Empty)
-            {
-                throw new ArgumentException("UserId cannot be empty", nameof(order.UserId));
-            }
-            if (order.FoodPackageId == Guid.Empty)
-            {
-                throw new ArgumentException("FoodPackageId cannot be empty", nameof(order.FoodPackageId));
-            }
+            ArgumentNullException.ThrowIfNull(order);
+            ArgumentNullException.ThrowIfNull(meal);
+            ArgumentNullException.ThrowIfNull(vendor);
+            ArgumentNullException.ThrowIfNull(user);
         }
         public async Task Delete(Guid id)
         {
@@ -57,8 +53,14 @@ namespace EatUp.Orders.Services
 
         public async Task<object> CreateOrderRequest(CreateOrderRequest request)
         {
-            EnsureOrder(request);
-            var order = request.ToOrder();
+            var meal = await mealProjections.GetById(request.FoodPackageId);
+            var vendor = await vendorProjections.GetById(request.VendorId);
+            var user = await userProjections.GetById(request.UserId);
+
+            EnsureOrder(request, meal, vendor, user);
+            
+            var order = request.ToOrder(meal.Title, user.Fullname, vendor.Name);
+            
             await repository.Insert(order);
             await repository.Save();
 
