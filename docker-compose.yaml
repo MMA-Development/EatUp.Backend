@@ -49,6 +49,23 @@ services:
       MY_APP_ENCRYPT_KEY: ${MY_APP_ENCRYPT_KEY}
       MY_APP_API_BASE_URL: ${MY_APP_API_BASE_URL}
 
+  eatup-hangfire:
+    image: ghcr.io/mma-development/eatup-hangfire:${USERS_IMAGE_TAG}
+    environment:
+     ASPNETCORE_ENVIRONMENT: "Development"
+     ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpHangfire;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+     RabbitMQ__Host: ${RabbitMQ__Host}
+     RabbitMQ__Exchange: ${RabbitMQ__Exchange}
+     RabbitMQ__Queue: "users"
+     RabbitMQ__Username: ${RabbitMQ__Username}
+     RabbitMQ__Password: ${RabbitMQ__Password}
+    networks:
+      - eatup_backend
+    depends_on:
+      - mssql
+      - rabbitmq
+    restart: unless-stopped
+
   eatup-users:
     image: ghcr.io/mma-development/eatup-users:${USERS_IMAGE_TAG}
     environment:

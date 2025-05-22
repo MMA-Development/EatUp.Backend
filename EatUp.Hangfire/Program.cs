@@ -1,3 +1,4 @@
+using EatUp.Hangfire;
 using EatUp.Hangfire.Jobs;
 using Hangfire;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ builder.Services.AddHangfireServer();
 
 var app = builder.Build();
 
+EnsureDatabaseCreated.Ensure(builder.Configuration.GetConnectionString("HangfireConnection"));
 
 app.UseHangfireDashboard();
 
