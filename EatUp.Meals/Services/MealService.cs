@@ -3,11 +3,12 @@ using EatUp.Meals.DTO;
 using EatUp.Meals.Extensions;
 using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
+using EatUp.RabbitMQ.Events.Meals;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EatUp.Meals.Services
 {
-    public class MealService(IRepository<Meal> repository) : IMealService
+    public class MealService(IRepository<Meal> repository, IRabbitMqPublisher publisher) : IMealService
     {
         public async Task<Guid> AddMeal(Guid vendorId, AddMealDTO addMealDTO)
         {
@@ -15,6 +16,8 @@ namespace EatUp.Meals.Services
             EnsureMeal(meal);
             await repository.Insert(meal);
             await repository.Save();
+            var mealCreatedEvent = ToMealCreatedEvent(meal);
+            await publisher.Publish(mealCreatedEvent);
             return meal.Id;
         }
 
@@ -64,6 +67,9 @@ namespace EatUp.Meals.Services
 
             await repository.Delete(mealId);
             await repository.Save();
+
+            var @event = new MealDeletedEvent(mealId);
+            await publisher.Publish(@event);
         }
 
         public async Task UpdateMeal(Guid mealId, Guid vendorId, UpdateMealDTO updateMealDTO)
@@ -74,7 +80,24 @@ namespace EatUp.Meals.Services
 
             updateMealDTO.MergeMeal(meal);
             await repository.Save();
+            
+            var @event = ToUpdateEvent(meal);
+            await publisher.Publish(@event);
         }
+
+        private MealUpdatedEvent ToUpdateEvent(Meal meal) => new()
+        {
+            Title = meal.Title,
+            Id = meal.Id,
+            Description = meal.Description,
+        };
+        
+        private MealCreatedEvent ToMealCreatedEvent(Meal meal) => new()
+        {
+            Description = meal.Description,
+            Id = meal.Id,
+            Title = meal.Title
+        };
 
         public async Task<MealDTO> GetMeal(Guid mealId)
         {

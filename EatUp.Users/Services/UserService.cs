@@ -3,6 +3,8 @@ using System.Numerics;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using EatUp.RabbitMQ;
+using EatUp.RabbitMQ.Events.Users;
 using EatUp.Users.DTO;
 using EatUp.Users.Models;
 using EatUp.Users.Repositories;
@@ -12,7 +14,11 @@ using Stripe;
 
 namespace EatUp.Users.Services
 {
-    public class UserService(IRepository<User> userRepository, IRepository<RefreshTokenInformation> refreshTokenRepository, IConfiguration configuration) : IUserService
+    public class UserService(
+        IRepository<User> userRepository, 
+        IRepository<RefreshTokenInformation> refreshTokenRepository, 
+        IConfiguration configuration, 
+        IRabbitMqPublisher publisher) : IUserService
     {
         public async Task AddUser(AddUserDTO adduser)
         {
@@ -24,7 +30,26 @@ namespace EatUp.Users.Services
             user.StripeCustomerId = stripeCustomerId;
             await userRepository.Insert(user);
             await userRepository.Save();
+
+            var @event = ToCreateEvent(user);
+            await publisher.Publish(@event);
         }
+
+        private UserCreatedEvent ToCreateEvent(User user) => new()
+        {
+            Id = user.Id,
+            Fullname = user.Username,
+            Email = user.Email,
+            StripeCustomerId = user.StripeCustomerId,
+        };
+
+        private UserUpdatedEvent ToUpdatedEvent(User user) => new()
+        {
+            Id = user.Id,
+            Fullname = user.Username,
+            Email = user.Email,
+            StripeCustomerId = user.StripeCustomerId,
+        };
 
         private async Task<string> CreateCustomerInStripe(User user)
         {
@@ -47,6 +72,8 @@ namespace EatUp.Users.Services
         {
             await userRepository.Delete(id);
             await userRepository.Save();
+            var @event = new UserDeletedEvent(id);
+            await publisher.Publish(@event);
         }
 
         public async Task<UserTokens> SignIn(SignInUserDTO singInUser)
@@ -120,6 +147,9 @@ namespace EatUp.Users.Services
 
             userDTO.Merge(userFromDb);
             await userRepository.Save();
+
+            var @event = ToUpdatedEvent(userFromDb);
+            await publisher.Publish(@event);
         }
 
         public async Task<UserDTO> GetUserById(Guid userId)

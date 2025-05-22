@@ -34,7 +34,15 @@ namespace EatUp.Vendors.Services
             await vendorRepository.Insert(vendor);
             await vendorRepository.Save();
 
-            await publisher.Publish(new VendorCreatedEvent
+            var @event = ToCreatedEvent(stripeAccountId, vendor);
+            await publisher.Publish(@event);
+
+            return accountLink;
+        }
+
+        private static VendorCreatedEvent ToCreatedEvent(string stripeAccountId, Vendor vendor)
+        {
+            return new VendorCreatedEvent
             {
                 Id = vendor.Id,
                 Name = vendor.Name,
@@ -43,9 +51,7 @@ namespace EatUp.Vendors.Services
                 Cvr = vendor.Cvr,
                 Longitude = vendor.Location.X,
                 Latitude = vendor.Location.Y
-            });
-
-            return accountLink;
+            };
         }
 
         private async Task<string> CreateStripeAccount(AddVendorDTO addVendor)
@@ -181,7 +187,7 @@ namespace EatUp.Vendors.Services
 
             vendorDTO.Merge(vendorFromDb);
             await vendorRepository.Save();
-            await publisher.Publish(vendorDTO.ToEvent(vendorFromDb.Id));
+            await publisher.Publish(vendorDTO.ToEvent(vendorId));
         }
 
         public async Task<VendorDTO> GetVendorById(Guid vendorId)
