@@ -15,7 +15,6 @@ namespace EatUp.Meals.Controllers
         {
             try
             {
-                // Assuming you have a service to get categories
                 var categories = await categoryService.GetPage(skip, take);
                 return Ok(categories);
             }
@@ -32,7 +31,7 @@ namespace EatUp.Meals.Controllers
             try
             {
                 var categoryId = await categoryService.Create(addCategoryDTO);
-                return CreatedAtAction(nameof(GetCategories), new { id = categoryId }, null);
+                return CreatedAtAction("/", new { id = categoryId }, null);
             }
             catch (ArgumentException ex)
             {
