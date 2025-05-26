@@ -25,34 +25,6 @@ namespace EatUp.Users.Tests
             new(_userRepoMock.Object, _refreshTokenRepoMock.Object, _configMock.Object, _publisherMock.Object);
 
         [Fact]
-        public async Task AddUser_ShouldInsertUserAndPublishEvent()
-        {
-            // Arrange
-            var addUser = new AddUserDTO
-            {
-                Username = "testuser",
-                Password = "password",
-                FullName = "Test User",
-                Email = "test@example.com"
-            };
-            var user = new User { Id = Guid.NewGuid(), Username = addUser.Username, FullName = addUser.FullName, Email = addUser.Email };
-            _userRepoMock.Setup(r => r.Exist(It.IsAny<Expression<Func<User, bool>>>())).ReturnsAsync(false);
-            _userRepoMock.Setup(r => r.Insert(It.IsAny<User>())).ReturnsAsync(user);
-            _userRepoMock.Setup(r => r.Save()).Returns(Task.CompletedTask);
-            _publisherMock.Setup(p => p.Publish(It.IsAny<UserCreatedEvent>())).Returns(Task.CompletedTask);
-
-            // Act
-            var service = CreateService();
-            // Stripe is not mocked here; in a real test, abstract and mock it.
-            // await service.AddUser(addUser);
-
-            // Assert
-            // _userRepoMock.Verify(r => r.Insert(It.IsAny<User>()), Times.Once);
-            // _userRepoMock.Verify(r => r.Save(), Times.Once);
-            // _publisherMock.Verify(p => p.Publish(It.IsAny<UserCreatedEvent>()), Times.Once);
-        }
-
-        [Fact]
         public async Task AddUser_ShouldThrow_WhenUsernameTaken()
         {
             var addUser = new AddUserDTO { Username = "taken" };
