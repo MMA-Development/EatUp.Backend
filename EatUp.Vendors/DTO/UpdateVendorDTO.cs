@@ -13,7 +13,7 @@ namespace EatUp.Vendors.DTO
 
         public double Latitude { get; set; }
 
-        internal void Merge(Vendor vendorFromDb)
+        public void Merge(Vendor vendorFromDb)
         {
             vendorFromDb.Email = Email;
             vendorFromDb.Name = Name;
@@ -23,7 +23,7 @@ namespace EatUp.Vendors.DTO
             };
         }
 
-        internal VendorUpdatedEvent ToEvent(Guid id)
+        public VendorUpdatedEvent ToEvent(Guid id)
         {
             return new VendorUpdatedEvent
             {

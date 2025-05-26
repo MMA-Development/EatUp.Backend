@@ -13,7 +13,7 @@ namespace EatUp.Meals.DTO
         public DateTime FirstAvailablePickup { get; set; }
         public DateTime LastAvailablePickup { get; set; }
 
-        internal void MergeMeal(Meal meal)
+        public void MergeMeal(Meal meal)
         {
             meal.Title = Title;
             meal.OriginalPrice = OriginalPrice;
