@@ -111,10 +111,12 @@ builder.Services.AddTransient<IRepository<Meal>, Repository<Meal>>();
 builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
 builder.Services.AddTransient<IRepository<VendorProjection>, Repository<VendorProjection>>();
 builder.Services.AddTransient<IRepository<CompletedOrderProjection>, Repository<CompletedOrderProjection>>();
+builder.Services.AddTransient<IRecommendationRepository, RecommendationRepository>();
 
 //services
 builder.Services.AddTransient<IMealService, MealService>();
 builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<IRecommendationService, RecommendationService>();
 
 //Event handlers
 builder.Services.AddSingleton<EventDispatcher>();
