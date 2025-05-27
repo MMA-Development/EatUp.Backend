@@ -26,5 +26,15 @@ namespace EatUp.Orders.DTO
                 Quantity = Quantity,
             };
         }
+
+        internal void Merge(Order order, string mealTitle, UserProjection user, string name)
+        {
+            order.FoodPackageTitle = mealTitle;
+            order.VendorName = name;
+            order.VendorId = VendorId;
+            order.FoodPackageId = FoodPackageId;
+            order.Price = Price;
+            order.Quantity = Quantity;
+        }
     }
 }

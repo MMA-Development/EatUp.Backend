@@ -83,5 +83,10 @@ namespace EatUp.Orders.Repositories
 
             return Task.CompletedTask;
         }
+
+        public async Task<TEntity?> GetByExpression(Expression<Func<TEntity, bool>> expression, bool tracking = false)
+        {
+            return await _context.GetQuery<TEntity>(tracking).FirstOrDefaultAsync(expression);
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace EatUp.Orders.Repositories
         Task<TEntity> Insert(TEntity entity);
         Task Delete(Guid id);
         Task Save();
+        Task<TEntity?> GetByExpression(Expression<Func<TEntity, bool>> expression, bool tracking = false);
     }
 }

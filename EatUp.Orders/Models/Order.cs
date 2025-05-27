@@ -13,6 +13,8 @@
         public string StripeCustomerId { get; set; }
         public int Quantity { get; internal set; }
         public string VendorName { get; internal set; }
+        public string EphemeralKey { get; internal set; }
+        public string PaymentSecret { get; internal set; }
     }
 
     public enum PaymentStatusEnum

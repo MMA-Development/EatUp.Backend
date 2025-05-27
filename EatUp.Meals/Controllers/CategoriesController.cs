@@ -31,7 +31,7 @@ namespace EatUp.Meals.Controllers
             try
             {
                 var categoryId = await categoryService.Create(addCategoryDTO);
-                return CreatedAtAction("/", new { id = categoryId }, null);
+                return Ok(new { id = categoryId });
             }
             catch (ArgumentException ex)
             {

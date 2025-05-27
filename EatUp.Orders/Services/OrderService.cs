@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace EatUp.Orders.Services
 {
-    public class OrderService(IBaseRepository<Order> repository, 
-        IBaseRepository<MealProjection> mealProjections, 
-        IBaseRepository<UserProjection> userProjections, 
+    public class OrderService(IBaseRepository<Order> repository,
+        IBaseRepository<MealProjection> mealProjections,
+        IBaseRepository<UserProjection> userProjections,
         IBaseRepository<VendorProjection> vendorProjections) : IOrderService
     {
         public async Task<PaginationResult<OrderDTO>> GetPageForVendor(OrdersForVendorParams @params, Guid vendorId)
@@ -20,16 +20,16 @@ namespace EatUp.Orders.Services
         }
         public async Task<PaginationResult<OrderDTO>> GetPageForUser(int skip, int take, Guid userId)
         {
-            Expression<Func<Order, bool>>  expression = x => x.UserId == userId;
+            Expression<Func<Order, bool>> expression = x => x.UserId == userId;
             return await repository.GetPage(skip, take, OrderDTO.FromEntity, expression);
         }
 
         private Expression<Func<Order, bool>> GetExpression(OrdersForVendorParams @params, Guid vendorId)
         {
             List<Expression<Func<Order, bool>>> expressions = new List<Expression<Func<Order, bool>>>();
-            
+
             expressions.Add(order => order.VendorId == vendorId);
-            
+
             if (!string.IsNullOrEmpty(@params.Search))
             {
                 expressions.Add(order => order.UserName.Contains(@params.Search) || order.Id.ToString().Contains(@params.Search));
@@ -58,24 +58,43 @@ namespace EatUp.Orders.Services
             var user = await userProjections.GetById(request.UserId);
 
             EnsureOrder(request, meal, vendor, user);
-            
-            var order = request.ToOrder(meal.Title, user, vendor.Name);
-            
-            await repository.Insert(order);
-            await repository.Save();
 
-            PaymentIntent paymentIntent = await CreatePaymentIntentForOrder(order);
-            EphemeralKey ephemeralKey = await CreateEphemeralKey(order.StripeCustomerId);
+            var order = await repository.GetByExpression(order => order.UserId == request.UserId);
 
-            order.PaymentId = paymentIntent.Id;
+            if (order == null)
+            {
+                order = request.ToOrder(meal.Title, user, vendor.Name);
+                await repository.Insert(order);
+                await repository.Save();
+                PaymentIntent paymentIntent = await CreatePaymentIntentForOrder(order);
+                EphemeralKey ephemeralKey = await CreateEphemeralKey(order.StripeCustomerId);
+                order.PaymentId = paymentIntent.Id;
+                order.EphemeralKey = ephemeralKey.Secret;
+                order.PaymentSecret = paymentIntent.ClientSecret;
+            }
+            else
+            {
+                request.Merge(order, meal.Title, user, vendor.Name);
+                await UpdatePaymentIntent(order);
+            }
+
             await repository.Save();
 
             return new
             {
-                ephemeralKey = ephemeralKey.Secret,
-                clientSecret = paymentIntent.ClientSecret,
+                ephemeralKey = order.EphemeralKey,
+                clientSecret = order.PaymentSecret,
                 orderId = order.Id
             };
+        }
+
+        private async Task UpdatePaymentIntent(Order order)
+        {
+            var service = new PaymentIntentService();
+            await service.UpdateAsync(order.PaymentId, new PaymentIntentUpdateOptions
+            {
+                Amount = (long)order.Price * 100,
+            });
         }
 
         private static async Task<EphemeralKey> CreateEphemeralKey(string customerId)
@@ -130,7 +149,7 @@ namespace EatUp.Orders.Services
         public async Task HandlePaymentIntentFailed(PaymentIntent? paymentIntent)
         {
             _ = paymentIntent ?? throw new ArgumentNullException();
-            if (paymentIntent.Metadata.TryGetValue("order_id", out string? orderId)) 
+            if (paymentIntent.Metadata.TryGetValue("order_id", out string? orderId))
             {
                 var order = await repository.GetById(Guid.Parse(orderId), true);
                 if (order == null)
