@@ -366,3 +366,4 @@ FodyWeavers.xsd
 /EatUp.Orders/appsettings.Development.json
 /EatUp.Meals/appsettings.Development.json
 /.env
+/EatUp.Files/appsettings.Development.json
