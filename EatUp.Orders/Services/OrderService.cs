@@ -2,6 +2,7 @@
 using EatUp.Orders.Extensions;
 using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
+using EatUp.RabbitMQ.Events.Order;
 using Stripe;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -11,7 +12,8 @@ namespace EatUp.Orders.Services
     public class OrderService(IBaseRepository<Order> repository,
         IBaseRepository<MealProjection> mealProjections,
         IBaseRepository<UserProjection> userProjections,
-        IBaseRepository<VendorProjection> vendorProjections) : IOrderService
+        IBaseRepository<VendorProjection> vendorProjections,
+        IRabbitMqPublisher publisher) : IOrderService
     {
         public async Task<PaginationResult<OrderDTO>> GetPageForVendor(OrdersForVendorParams @params, Guid vendorId)
         {
@@ -139,12 +141,24 @@ namespace EatUp.Orders.Services
 
                 order.PaymentStatus = PaymentStatusEnum.Completed;
                 await repository.Save();
+
+                var @event = ToCompletedOrderEvent(order);
+                await publisher.Publish(@event);
             }
             else
             {
                 throw new ArgumentException("Order ID not found in payment intent metadata");
             }
         }
+
+        private static OrderCompletedEvent ToCompletedOrderEvent(Order order) => new()
+        {
+            Id = order.Id,
+            MealId = order.FoodPackageId,
+            Quantity = order.Quantity,
+            UserId = order.UserId,
+            VendorId = order.VendorId
+        };
 
         public async Task HandlePaymentIntentFailed(PaymentIntent? paymentIntent)
         {

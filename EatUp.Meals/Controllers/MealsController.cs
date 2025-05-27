@@ -99,5 +99,19 @@ namespace EatUp.Meals.Controllers
                 return BadRequest(ex.Message);
             }
         }
-    }
+
+        [HttpGet("recommended")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> GetRecommendedMeals([FromQuery] MealSearchParamsDTO mealSearchParams)
+        {
+            try
+            {
+                var meals = await mealService.GetPage(mealSearchParams);
+                return Ok(meals);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 }
