@@ -1,26 +1,30 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace EatUp.Files
 {
-    public class FileService(string connectionString, string containerName)
+    public class FileService(string connectionString) : IFileService
     {
-        public async Task<Uri> UploadFileAsync(IFormFile file)
+        public async Task<string> UploadFileAsync(IFormFile file, string containerName)
         {
             var containerClient = new BlobContainerClient(connectionString, containerName);
-            await containerClient.CreateIfNotExistsAsync();
+            await containerClient.CreateIfNotExistsAsync(publicAccessType: Azure.Storage.Blobs.Models.PublicAccessType.Blob);
 
             string blobName = Guid.NewGuid() + Path.GetExtension(file.FileName);
             var blobClient = containerClient.GetBlobClient(blobName);
 
             using (var stream = file.OpenReadStream())
             {
-                await blobClient.UploadAsync(stream, overwrite: false);
+                await blobClient.UploadAsync(stream, new BlobHttpHeaders
+                {
+                    ContentType = file.ContentType
+                });
             }
 
-            return blobClient.Uri;
+            return blobClient.Uri.AbsolutePath;
         }
 
-        public async Task DeleteBlobAsync(string blobName)
+        public async Task DeleteBlobAsync(string blobName, string containerName)
         {
             var containerClient = new BlobContainerClient(connectionString, containerName);
             var blobClient = containerClient.GetBlobClient(blobName);
@@ -28,11 +32,9 @@ namespace EatUp.Files
             await blobClient.DeleteIfExistsAsync();
         }
 
-        public static string GetBlobNameFromUrl(string blobUrl)
+        public static (string, string) GetBlobInfoFromUrl(string path)
         {
-            var uri = new Uri(blobUrl);
-
-            string absolutePath = uri.AbsolutePath;
+            string absolutePath = path.Replace("devstoreaccount1/", "");
 
             var segments = absolutePath.TrimStart('/').Split('/', 2);
 
@@ -41,8 +43,9 @@ namespace EatUp.Files
                 throw new ArgumentException("URL does not contain a valid blob path.");
             }
 
+            string containerName = Uri.UnescapeDataString(segments[0]);
             string blobName = Uri.UnescapeDataString(segments[1]);
-            return blobName;
+            return (containerName, blobName);
         }
     }
 }
