@@ -64,8 +64,6 @@ services:
     depends_on:
       - mssql
       - rabbitmq
-    ports:
-      - "8081:8080"
     restart: unless-stopped
   eatup-hangfire:
     image: ghcr.io/mma-development/eatup-hangfire:${HANGFIRE_IMAGE_TAG}
@@ -196,6 +194,7 @@ services:
       ReverseProxy__Clusters__vendors__Destinations__destination1__Address: ${ReverseProxy__Clusters__vendors__Destinations__destination1__Address}
       ReverseProxy__Clusters__orders__Destinations__destination1__Address: ${ReverseProxy__Clusters__orders__Destinations__destination1__Address}
       ReverseProxy__Clusters__meals__Destinations__destination1__Address: ${ReverseProxy__Clusters__meals__Destinations__destination1__Address}
+      ReverseProxy__Clusters__files__Destinations__destination1__Address: ${ReverseProxy__Clusters__files__Destinations__destination1__Address}
     ports:
       - "8080:8080"
     networks:

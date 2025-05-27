@@ -27,6 +27,7 @@ if (app.Environment.IsDevelopment())
         options.SwaggerEndpoint("/swagger/users/v1/swagger.json", "EatUp.Users"); 
         options.SwaggerEndpoint("/swagger/meals/v1/swagger.json", "EatUp.Meals");
         options.SwaggerEndpoint("/swagger/orders/v1/swagger.json", "EatUp.Orders");
+        options.SwaggerEndpoint("/swagger/files/v1/swagger.json", "EatUp.Files");
 
         options.RoutePrefix = "swagger";
     });
