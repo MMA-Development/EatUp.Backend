@@ -20,8 +20,8 @@ services:
     image: datalust/seq:latest
     container_name: seq
     ports:
-      - "5341:80"      # HTTP UI and ingestion endpoint
-      - "5342:5342"    # Optional ingestion over secure channel (if enabled)
+      - "5341:80" # HTTP UI and ingestion endpoint
+      - "5342:5342" # Optional ingestion over secure channel (if enabled)
     environment:
       - ACCEPT_EULA=Y
     networks:
@@ -48,19 +48,37 @@ services:
     environment:
       MY_APP_ENCRYPT_KEY: ${MY_APP_ENCRYPT_KEY}
       MY_APP_API_BASE_URL: ${MY_APP_API_BASE_URL}
-
+  eatup-files:
+    image: ghcr.io/mma-development/eatup-files:${FILES_IMAGE_TAG}
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpFiles;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+      RabbitMQ__Host: ${RabbitMQ__Host}
+      RabbitMQ__Exchange: ${RabbitMQ__Exchange}
+      RabbitMQ__Queue: "files"
+      RabbitMQ__Username: ${RabbitMQ__Username}
+      RabbitMQ__Password: ${RabbitMQ__Password}
+      Azure__ConnectionString: ${Azure__ConnectionString}
+    networks:
+      - eatup_backend
+    depends_on:
+      - mssql
+      - rabbitmq
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
   eatup-hangfire:
     image: ghcr.io/mma-development/eatup-hangfire:${HANGFIRE_IMAGE_TAG}
     environment:
-     ASPNETCORE_ENVIRONMENT: "Development"
-     ConnectionStrings__HangfireConnection: "Server=mssql;Database=EatUpHangfire;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
-     RabbitMQ__Host: ${RabbitMQ__Host}
-     RabbitMQ__Exchange: ${RabbitMQ__Exchange}
-     RabbitMQ__Queue: "hangfire"
-     RabbitMQ__Username: ${RabbitMQ__Username}
-     RabbitMQ__Password: ${RabbitMQ__Password}
-     Hangfire__Username: ${Hangfire__Username}
-     Hangfire__Password: ${Hangfire__Password}
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__HangfireConnection: "Server=mssql;Database=EatUpHangfire;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
+      RabbitMQ__Host: ${RabbitMQ__Host}
+      RabbitMQ__Exchange: ${RabbitMQ__Exchange}
+      RabbitMQ__Queue: "hangfire"
+      RabbitMQ__Username: ${RabbitMQ__Username}
+      RabbitMQ__Password: ${RabbitMQ__Password}
+      Hangfire__Username: ${Hangfire__Username}
+      Hangfire__Password: ${Hangfire__Password}
     networks:
       - eatup_backend
     depends_on:
@@ -193,6 +211,7 @@ volumes:
   rabbitmq_data:
   mssql_data:
   seq_data:
+
 
 networks:
   eatup_backend:
