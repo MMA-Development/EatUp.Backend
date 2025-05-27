@@ -37,6 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{88779D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EatUp.Hangfire", "EatUp.Hangfire\EatUp.Hangfire.csproj", "{C4653502-9D6A-4C31-A4CE-8EB19EA5116A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EatUp.Filestorage", "EatUp.Filestorage\EatUp.Filestorage.csproj", "{D6AC81A0-8E01-4444-87C7-D3674BA4E9AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,10 @@ Global
 		{C4653502-9D6A-4C31-A4CE-8EB19EA5116A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4653502-9D6A-4C31-A4CE-8EB19EA5116A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4653502-9D6A-4C31-A4CE-8EB19EA5116A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6AC81A0-8E01-4444-87C7-D3674BA4E9AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6AC81A0-8E01-4444-87C7-D3674BA4E9AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6AC81A0-8E01-4444-87C7-D3674BA4E9AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6AC81A0-8E01-4444-87C7-D3674BA4E9AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +108,7 @@ Global
 		{07D3BB3A-59A4-4ED3-FA1F-72D4178BC5E0} = {CBA34CB8-0CDB-4395-B07D-86DBCC8D3D96}
 		{2C04C512-A552-4DAB-BCD6-AB47965B6C36} = {88779D68-CF1C-446B-95CE-EFC7E8D8B342}
 		{C4653502-9D6A-4C31-A4CE-8EB19EA5116A} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{D6AC81A0-8E01-4444-87C7-D3674BA4E9AE} = {88779D68-CF1C-446B-95CE-EFC7E8D8B342}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B6CDFA50-4DA2-4256-8A8D-0A80525BA88E}
