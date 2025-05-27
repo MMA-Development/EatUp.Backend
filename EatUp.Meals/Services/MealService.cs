@@ -107,7 +107,7 @@ namespace EatUp.Meals.Services
 
         public async Task<MealDTO> GetMeal(Guid mealId)
         {
-            var meal = await repository.GetById(mealId, MealDTO.FromMeal);
+            var meal = await repository.GetById(mealId, MealDTO.FromMeal, includes: [x => x.Categories]);
             return meal;
         }
     }

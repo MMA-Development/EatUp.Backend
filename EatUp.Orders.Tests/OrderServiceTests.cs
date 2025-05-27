@@ -18,9 +18,10 @@ namespace EatUp.Orders.Tests
         private readonly Mock<IBaseRepository<MealProjection>> _mealProjRepoMock = new();
         private readonly Mock<IBaseRepository<UserProjection>> _userProjRepoMock = new();
         private readonly Mock<IBaseRepository<VendorProjection>> _vendorProjRepoMock = new();
+        private readonly Mock<IRabbitMqPublisher> _rabbitMqPublisherMock = new();
 
         private OrderService CreateService() =>
-            new(_orderRepoMock.Object, _mealProjRepoMock.Object, _userProjRepoMock.Object, _vendorProjRepoMock.Object);
+            new(_orderRepoMock.Object, _mealProjRepoMock.Object, _userProjRepoMock.Object, _vendorProjRepoMock.Object, _rabbitMqPublisherMock.Object);
 
         [Fact]
         public async Task GetPageForVendor_ReturnsPaginationResult()

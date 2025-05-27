@@ -102,11 +102,11 @@ namespace EatUp.Meals.Controllers
 
         [HttpGet("recommended")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> GetRecommendedMeals([FromQuery] MealSearchParamsDTO mealSearchParams)
+        public async Task<IActionResult> GetRecommendedMeals([FromHeader] Guid userId, [FromQuery] int take, [FromQuery] int skip, [FromServices] IRecommendationService recommendationService)
         {
             try
             {
-                var meals = await mealService.GetPage(mealSearchParams);
+                var meals = await recommendationService.GetRecommendedMeals(userId, skip, take);
                 return Ok(meals);
             }
             catch (Exception ex)
@@ -114,4 +114,5 @@ namespace EatUp.Meals.Controllers
                 return BadRequest(ex.Message);
             }
         }
+    }
 }
