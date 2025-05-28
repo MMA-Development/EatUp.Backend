@@ -93,9 +93,9 @@ namespace EatUp.Orders.Services
 
         private void EnsureMealIsAvailable(CreateOrderRequest orderRequest, MealProjection meal)
         {
-            var ordersForMeal = repository.Count(x => x.FoodPackageId == orderRequest.FoodPackageId && x.VendorId == orderRequest.VendorId && x.PaymentStatus == PaymentStatusEnum.Completed);
-            
-            if (meal.Quantity <= ordersForMeal + orderRequest.Quantity)
+            var ordersForMeal = repository.Query(x => x.FoodPackageId == orderRequest.FoodPackageId && x.VendorId == orderRequest.VendorId && x.PaymentStatus == PaymentStatusEnum.Completed);
+            var totalBought = ordersForMeal.Select(x => x.Quantity).Sum();
+            if (meal.Quantity <= totalBought + orderRequest.Quantity)
             {
                 throw new InvalidOperationException("Meal is not available in the requested quantity.");
             }

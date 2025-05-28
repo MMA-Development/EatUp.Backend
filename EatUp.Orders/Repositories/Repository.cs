@@ -88,5 +88,10 @@ namespace EatUp.Orders.Repositories
         {
             return await _context.GetQuery<TEntity>(tracking).FirstOrDefaultAsync(expression);
         }
+
+        public IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> expression)
+        {
+            return _context.GetQuery<TEntity>().Where(expression);
+        }
     }
 }
