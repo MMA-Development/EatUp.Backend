@@ -11,6 +11,7 @@ namespace EatUp.Meals.EventHandlers
         {
             var compltedOrderProjection = CompletedOrderProjection.FromEvent(@event);
             await repository.Insert(compltedOrderProjection);
+            await repository.Save();
         }
     }
 }
