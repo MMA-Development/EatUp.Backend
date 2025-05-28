@@ -61,7 +61,7 @@ namespace EatUp.Orders.Services
 
             EnsureOrder(request, meal, vendor, user);
 
-            var order = await repository.GetByExpression(order => order.UserId == userId);
+            var order = await repository.GetByExpression(order => order.UserId == userId && order.PaymentStatus == PaymentStatusEnum.Pending);
 
             if (order == null)
             {
