@@ -60,6 +60,7 @@ namespace EatUp.Orders.Services
             var user = await userProjections.GetById(userId);
 
             EnsureOrder(request, meal, vendor, user);
+            EnsureMealIsAvailable(request, meal);
 
             var order = await repository.GetByExpression(order => order.UserId == userId && order.PaymentStatus == PaymentStatusEnum.Pending);
 
@@ -88,6 +89,16 @@ namespace EatUp.Orders.Services
                 clientSecret = order.PaymentSecret,
                 orderId = order.Id
             };
+        }
+
+        private void EnsureMealIsAvailable(CreateOrderRequest orderRequest, MealProjection meal)
+        {
+            var ordersForMeal = repository.Count(x => x.FoodPackageId == orderRequest.FoodPackageId && x.VendorId == orderRequest.VendorId && x.PaymentStatus == PaymentStatusEnum.Completed);
+            
+            if (meal.Quantity <= ordersForMeal + orderRequest.Quantity)
+            {
+                throw new InvalidOperationException("Meal is not available in the requested quantity.");
+            }
         }
 
         private async Task UpdatePaymentIntent(Order order)

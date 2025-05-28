@@ -12,5 +12,6 @@ namespace EatUp.Orders.Repositories
         Task Delete(Guid id);
         Task Save();
         Task<TEntity?> GetByExpression(Expression<Func<TEntity, bool>> expression, bool tracking = false);
+        int Count(Expression<Func<TEntity, bool>> expression);
     }
 }

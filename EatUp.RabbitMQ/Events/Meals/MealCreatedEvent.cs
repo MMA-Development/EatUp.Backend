@@ -11,5 +11,6 @@ namespace EatUp.RabbitMQ.Events.Meals
         public Guid Id { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
+        public int Quantity { get; set; }
     }
 }

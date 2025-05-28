@@ -103,13 +103,15 @@ namespace EatUp.Meals.Services
             Title = meal.Title,
             Id = meal.Id,
             Description = meal.Description,
+            Quantity = meal.Quantity
         };
         
         private MealCreatedEvent ToMealCreatedEvent(Meal meal) => new()
         {
             Description = meal.Description,
             Id = meal.Id,
-            Title = meal.Title
+            Title = meal.Title,
+            Quantity = meal.Quantity
         };
 
         public async Task<MealDTO> GetMeal(Guid mealId)
