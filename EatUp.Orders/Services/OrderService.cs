@@ -23,7 +23,7 @@ namespace EatUp.Orders.Services
         public async Task<PaginationResult<OrderDTO>> GetPageForUser(int skip, int take, Guid userId)
         {
             Expression<Func<Order, bool>> expression = x => x.UserId == userId;
-            return await repository.GetPage(skip, take, OrderDTO.FromEntity, expression);
+            return await repository.GetPage(skip, take, OrderDTO.FromEntity, expression, orderBy: "CreatedAt", ascending: false);
         }
 
         private Expression<Func<Order, bool>> GetExpression(OrdersForVendorParams @params, Guid vendorId)
