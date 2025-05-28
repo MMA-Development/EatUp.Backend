@@ -39,6 +39,7 @@ namespace EatUp.Meals.Services
         {
             var filters = new List<Expression<Func<Meal, bool>>>();
 
+            filters.Add(m => m.LastAvailablePickup >= DateTime.UtcNow);
             if (mealSearchParams.VendorId != null)
             {
                 filters.Add(m => m.VendorId == mealSearchParams.VendorId);
@@ -85,8 +86,12 @@ namespace EatUp.Meals.Services
             var meal = await repository.GetById(mealId, true);
             if (meal.VendorId != vendorId)
                 throw new Exception("Could not delete meal. Meal does not belong to vendor.");
-
+            
+            
             updateMealDTO.MergeMeal(meal);
+            meal.Categories = (await categoryRepository.GetQuery(true))
+                .Where(x => updateMealDTO.Categories.Contains(x.Id))
+                .ToList();
             await repository.Save();
             
             var @event = ToUpdateEvent(meal);
