@@ -109,6 +109,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<Context>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+builder.Services.AddSingleton<IRabbitMqPublisher>(x =>
+    new RabbitMqPublisher(
+        builder.Configuration["RabbitMQ:Host"],
+        "events",
+        builder.Configuration["RabbitMQ:Username"],
+        builder.Configuration["RabbitMQ:Password"]
+    ));
+
 builder.Services.AddTransient<IBaseRepository<Order>, Repository<Order>>();
 builder.Services.AddTransient<IBaseRepository<VendorProjection>, Repository<VendorProjection>>();
 builder.Services.AddTransient<IBaseRepository<UserProjection>, Repository<UserProjection>>();
