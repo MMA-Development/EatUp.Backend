@@ -1,4 +1,6 @@
-﻿namespace EatUp.Meals.Models
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace EatUp.Meals.Models
 {
     public class Meal: BaseEntity
     {
@@ -14,5 +16,8 @@
         public DateTime LastAvailablePickup { get; set; }
         public virtual List<Category> Categories { get; set; } = [];
         public string ImageUrl { get; internal set; }
+
+        [ForeignKey("MealId")]
+        public virtual List<CompletedOrderProjection> CompletedOrders { get; set; }
     }
 }
