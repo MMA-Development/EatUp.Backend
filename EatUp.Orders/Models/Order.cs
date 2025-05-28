@@ -9,12 +9,12 @@
         public string FoodPackageTitle { get; set; }
         public PaymentStatusEnum PaymentStatus { get; set; }
         public string? PaymentId { get; set; }
-        public float Price { get; internal set; }
+        public float Price { get; set; }
         public string StripeCustomerId { get; set; }
-        public int Quantity { get; internal set; }
-        public string VendorName { get; internal set; }
-        public string EphemeralKey { get; internal set; }
-        public string PaymentSecret { get; internal set; }
+        public int Quantity { get; set; }
+        public string VendorName { get; set; }
+        public string? EphemeralKey { get; set; }
+        public string? PaymentSecret { get; set; }
     }
 
     public enum PaymentStatusEnum
