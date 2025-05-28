@@ -40,6 +40,7 @@ namespace EatUp.Meals.Services
             var filters = new List<Expression<Func<Meal, bool>>>();
 
             filters.Add(m => m.LastAvailablePickup >= DateTime.UtcNow);
+            filters.Add(m => m.Quantity - m.CompletedOrders.Sum(x => x.Quantity) > 0);
             if (mealSearchParams.VendorId != null)
             {
                 filters.Add(m => m.VendorId == mealSearchParams.VendorId);
