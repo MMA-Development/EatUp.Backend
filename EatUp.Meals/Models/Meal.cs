@@ -13,5 +13,6 @@
         public DateTime FirstAvailablePickup { get; set; }
         public DateTime LastAvailablePickup { get; set; }
         public virtual List<Category> Categories { get; set; } = [];
+        public string ImageUrl { get; internal set; }
     }
 }

@@ -27,6 +27,8 @@ namespace EatUp.Vendors.DTO
         [Required]
         public double Latitude { get; set; }
 
+        public string Logo { get; set; }
+
         public Vendor ToVendor()
         {
             var vendor = new Vendor
@@ -38,7 +40,7 @@ namespace EatUp.Vendors.DTO
                 {
                     SRID = 4326
                 },
-                Logo = "default",
+                Logo = Logo,
                 Email = Email,
             };
             var hasher = new PasswordHasher<Vendor>();

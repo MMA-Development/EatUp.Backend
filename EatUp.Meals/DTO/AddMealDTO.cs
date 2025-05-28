@@ -10,7 +10,7 @@ namespace EatUp.Meals.DTO
         public string Description { get; set; } = null!;
         public int Quantity { get; set; }
         public int MaxOrderQuantity { get; set; }
-
+        public string ImageUrl { get; set; }
         public DateTime FirstAvailablePickup { get; set; }
         public DateTime LastAvailablePickup { get; set; }
         public Guid[] Categories { get; set; }
@@ -22,6 +22,7 @@ namespace EatUp.Meals.DTO
                 VendorId = vendorId,
                 VendorName = vendorName,
                 Title = Title,
+                ImageUrl = ImageUrl,
                 OriginalPrice = OriginalPrice,
                 Price = Price,
                 Description = Description,

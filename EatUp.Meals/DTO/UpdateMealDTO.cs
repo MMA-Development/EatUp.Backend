@@ -12,6 +12,7 @@ namespace EatUp.Meals.DTO
         public int MaxOrderQuantity { get; set; }
         public DateTime FirstAvailablePickup { get; set; }
         public DateTime LastAvailablePickup { get; set; }
+        public string ImageUrl { get; set; }
         public Guid[] Categories { get; set; }
 
         public void MergeMeal(Meal meal)
@@ -24,6 +25,7 @@ namespace EatUp.Meals.DTO
             meal.MaxOrderQuantity = MaxOrderQuantity;
             meal.FirstAvailablePickup = FirstAvailablePickup;
             meal.LastAvailablePickup = LastAvailablePickup;
+            meal.ImageUrl = ImageUrl;
         }
     }
 }
