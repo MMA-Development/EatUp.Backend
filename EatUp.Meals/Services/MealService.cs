@@ -11,13 +11,15 @@ namespace EatUp.Meals.Services
     public class MealService(
         IRepository<Meal> repository,
         IRepository<VendorProjection> vendorProjections,
-        IRabbitMqPublisher publisher) : IMealService
+        IRabbitMqPublisher publisher,
+        IRepository<Category> categoryRepository) : IMealService
     {
         public async Task<Guid> AddMeal(Guid vendorId, AddMealDTO addMealDTO)
         {
             var vendor = await vendorProjections.GetById(vendorId);
             EnsureMeal(addMealDTO, vendor);
-            Meal meal = addMealDTO.ToMeal(vendorId, vendor.Name);
+            var categories = (await categoryRepository.GetQuery(true)).Where(x => addMealDTO.Categories.Contains(x.Id)).ToList();
+            Meal meal = addMealDTO.ToMeal(vendorId, vendor.Name, categories);
             await repository.Insert(meal);
             await repository.Save();
             var mealCreatedEvent = ToMealCreatedEvent(meal);

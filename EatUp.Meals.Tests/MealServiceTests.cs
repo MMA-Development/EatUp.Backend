@@ -17,10 +17,11 @@ namespace EatUp.Meals.Tests
     {
         private readonly Mock<IRepository<Meal>> _mealRepoMock = new();
         private readonly Mock<IRepository<VendorProjection>> _vendorRepoMock = new();
+        private readonly Mock<IRepository<Category>> _categoryRepoMock = new();
         private readonly Mock<IRabbitMqPublisher> _publisherMock = new();
 
         private MealService CreateService() =>
-            new(_mealRepoMock.Object, _vendorRepoMock.Object, _publisherMock.Object);
+            new(_mealRepoMock.Object, _vendorRepoMock.Object, _publisherMock.Object, _categoryRepoMock.Object);
 
         [Fact]
         public async Task GetPage_ShouldReturnPaginationResult()

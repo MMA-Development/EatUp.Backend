@@ -13,8 +13,9 @@ namespace EatUp.Meals.DTO
 
         public DateTime FirstAvailablePickup { get; set; }
         public DateTime LastAvailablePickup { get; set; }
+        public Guid[] Categories { get; set; }
 
-        internal Meal ToMeal(Guid vendorId, string vendorName)
+        internal Meal ToMeal(Guid vendorId, string vendorName, List<Category> categories)
         {
             return new Meal
             {
@@ -27,7 +28,8 @@ namespace EatUp.Meals.DTO
                 Quantity = Quantity,
                 MaxOrderQuantity = MaxOrderQuantity,
                 FirstAvailablePickup = FirstAvailablePickup,
-                LastAvailablePickup = LastAvailablePickup
+                LastAvailablePickup = LastAvailablePickup,
+                Categories = categories,
             };
         }
     }
