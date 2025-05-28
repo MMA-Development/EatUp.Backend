@@ -19,8 +19,7 @@ namespace EatUp.Orders.Controllers
         {
             try
             {
-                request.UserId = userId;
-                var result = await orderService.CreateOrderRequest(request);
+                var result = await orderService.CreateOrderRequest(userId, request);
                 return Ok(result);
             }
             catch (ArgumentException ex)

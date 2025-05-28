@@ -87,13 +87,12 @@ namespace EatUp.Orders.Tests
             {
                 FoodPackageId = Guid.NewGuid(),
                 VendorId = Guid.NewGuid(),
-                UserId = Guid.NewGuid()
             };
 
             _mealProjRepoMock.Setup(r => r.GetById(request.FoodPackageId, false, false, null)).ReturnsAsync((MealProjection)null);
 
             var service = CreateService();
-            await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateOrderRequest(request));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => service.CreateOrderRequest(Guid.NewGuid(), request));
         }
 
         [Fact]

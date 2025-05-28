@@ -53,15 +53,15 @@ namespace EatUp.Orders.Services
             await repository.Save();
         }
 
-        public async Task<object> CreateOrderRequest(CreateOrderRequest request)
+        public async Task<object> CreateOrderRequest(Guid userId, CreateOrderRequest request)
         {
             var meal = await mealProjections.GetById(request.FoodPackageId);
             var vendor = await vendorProjections.GetById(request.VendorId);
-            var user = await userProjections.GetById(request.UserId);
+            var user = await userProjections.GetById(userId);
 
             EnsureOrder(request, meal, vendor, user);
 
-            var order = await repository.GetByExpression(order => order.UserId == request.UserId);
+            var order = await repository.GetByExpression(order => order.UserId == userId);
 
             if (order == null)
             {

@@ -4,7 +4,6 @@ namespace EatUp.Orders.DTO
 {
     public class CreateOrderRequest
     {
-        public Guid UserId { get; set; }
         public Guid FoodPackageId { get; set; }
         public float Price { get; set; }
         public Guid VendorId { get; set; }
@@ -14,7 +13,7 @@ namespace EatUp.Orders.DTO
         {
             return new Order
             {
-                UserId = UserId,
+                UserId = user.Id,
                 UserName = user.Fullname,
                 FoodPackageId = FoodPackageId,
                 FoodPackageTitle = mealTitle,
