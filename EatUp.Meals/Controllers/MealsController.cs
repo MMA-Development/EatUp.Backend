@@ -58,7 +58,7 @@ namespace EatUp.Meals.Controllers
 
         [HttpPut("{mealId:guid}")]
         [Authorize(Policy = "Vendor")]
-        public async Task<IActionResult> UpdateMeal([FromRoute] Guid mealId, [FromQuery] Guid vendorId, [FromBody] UpdateMealDTO meal)
+        public async Task<IActionResult> UpdateMeal([FromRoute] Guid mealId, [FromHeader] Guid vendorId, [FromBody] UpdateMealDTO meal)
         {
             try
             {
@@ -87,7 +87,7 @@ namespace EatUp.Meals.Controllers
 
         [HttpDelete("{mealId:guid}")]
         [Authorize(Policy = "Vendor")]
-        public async Task<IActionResult> Delete(Guid vendorId, Guid mealId)
+        public async Task<IActionResult> Delete([FromHeader] Guid vendorId, Guid mealId)
         {
             try
             {
