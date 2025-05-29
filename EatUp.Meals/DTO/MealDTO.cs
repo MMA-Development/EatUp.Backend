@@ -19,6 +19,7 @@ namespace EatUp.Meals.DTO
         public DateTime LastAvailablePickup { get; set; }
         public virtual List<Category> Categories { get; set; } = [];
         public int Available { get; set; }
+        public double? AverageReview { get; set; }
 
         public static Expression<Func<Meal, MealDTO>> FromMeal = (meal) => new MealDTO
         {
@@ -35,7 +36,8 @@ namespace EatUp.Meals.DTO
             LastAvailablePickup = meal.LastAvailablePickup,
             MaxOrderQuantity = meal.MaxOrderQuantity,
             Available = meal.Quantity - meal.CompletedOrders.Select(x => x.Quantity).Sum(),
-            ImageUrl = meal.ImageUrl
+            ImageUrl = meal.ImageUrl,
+            AverageReview = meal.Reviews.Count > 0 ? meal.Reviews.Average(x => x.Rating) : null
         };
     }
 }

@@ -52,7 +52,7 @@ namespace EatUp.Gateway
                 }
                 logger.LogInformation("Request {Method} {Path} Body={Body}",
                     context.Request.Method, context.Request.Path, requestBody);
-
+          
                 // Capture response
                 var originalBodyStream = context.Response.Body;
                 using var responseBody = new MemoryStream();

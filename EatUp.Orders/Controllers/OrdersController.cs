@@ -59,6 +59,21 @@ namespace EatUp.Orders.Controllers
             }
         }
 
+        [HttpPost("{orderId:guid}/pickup")]
+        [Authorize(Policy ="User")]
+        public async Task<IActionResult> PickupOrder(Guid orderId, [FromHeader] Guid userId)
+        {
+            try
+            {
+                await orderService.PickupOrder(orderId, userId);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("vendor")]
         [Authorize(Policy = "Vendor")]
         public async Task<IActionResult> GetPageVendor([FromQuery] OrdersForVendorParams @params, [FromHeader] Guid vendorId)

@@ -19,5 +19,8 @@ namespace EatUp.Meals.Models
 
         [ForeignKey("MealId")]
         public virtual List<CompletedOrderProjection> CompletedOrders { get; set; }
+
+        [ForeignKey("MealId")]
+        public virtual List<Review> Reviews { get; set; }
     }
 }

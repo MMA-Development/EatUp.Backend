@@ -12,5 +12,6 @@ namespace EatUp.Orders.Services
         Task HandlePaymentIntentSucceeded(PaymentIntent? paymentIntent);
         Task HandlePaymentIntentFailed(PaymentIntent? paymentMethod);
         Task<PaginationResult<OrderDTO>> GetPageForUser(int skip, int take, Guid vendorId);
+        Task PickupOrder(Guid orderId, Guid userId);
     }
 }

@@ -21,6 +21,7 @@
     {
         Pending = 0,
         Completed,
-        Failed
+        Failed,
+        PickedUp
     }
 }

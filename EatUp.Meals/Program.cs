@@ -108,6 +108,7 @@ builder.Services.AddDbContext<Context>(options =>
 
 //repositrories
 builder.Services.AddTransient<IRepository<Meal>, Repository<Meal>>();
+builder.Services.AddTransient<IRepository<Review>, Repository<Review>>();
 builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
 builder.Services.AddTransient<IRepository<VendorProjection>, Repository<VendorProjection>>();
 builder.Services.AddTransient<IRepository<CompletedOrderProjection>, Repository<CompletedOrderProjection>>();

@@ -115,5 +115,18 @@ namespace EatUp.Meals.Controllers
             }
         }
 
+        [HttpPost("{mealId:guid}/review")]
+        public async Task<IActionResult> AddReview([FromRoute] Guid mealId, [FromBody] AddReviewDTO review, [FromHeader] Guid userId)
+        {
+            try
+            {
+                await mealService.AddReview(mealId, review, userId);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

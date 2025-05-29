@@ -190,5 +190,20 @@ namespace EatUp.Orders.Services
                 throw new ArgumentException("Order ID not found in payment intent metadata");
             }
         }
+
+        public async Task PickupOrder(Guid orderId, Guid userId)
+        {
+            var order = await repository.GetById(orderId, true);
+            if (order.UserId != userId)
+            {
+                throw new InvalidOperationException("Order cannot be picked up. User does not own the order.");
+            }
+            if (order.PaymentStatus != PaymentStatusEnum.Completed)
+            {
+                throw new InvalidOperationException("Order cannot be picked up. Payment is not completed.");
+            }
+            order.PaymentStatus = PaymentStatusEnum.PickedUp;
+            await repository.Save();
+        }
     }
 }

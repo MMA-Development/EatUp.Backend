@@ -12,7 +12,9 @@ namespace EatUp.Meals.Services
         IRepository<Meal> repository,
         IRepository<VendorProjection> vendorProjections,
         IRabbitMqPublisher publisher,
-        IRepository<Category> categoryRepository) : IMealService
+        IRepository<Category> categoryRepository,
+        IRepository<Review> reviewRepository,
+        IRepository<CompletedOrderProjection> orderProjections) : IMealService
     {
         public async Task<Guid> AddMeal(Guid vendorId, AddMealDTO addMealDTO)
         {
@@ -119,6 +121,18 @@ namespace EatUp.Meals.Services
         {
             var meal = await repository.GetById(mealId, MealDTO.FromMeal, includes: [x => x.Categories]);
             return meal;
+        }
+
+        public async Task AddReview(Guid mealId, AddReviewDTO reviewDto, Guid userId)
+        {
+            var userHasACompletedOrderForMeal = (await orderProjections.GetQuery()).Any(x => x.UserId == userId && x.MealId == mealId);
+            if(!userHasACompletedOrderForMeal)
+            {
+                throw new Exception("User has not completed an order for this meal. Cannot add review.");
+            }
+            var review = reviewDto.ToReview(mealId, userId);
+            await reviewRepository.Insert(review);
+            await reviewRepository.Save();
         }
     }
 }
