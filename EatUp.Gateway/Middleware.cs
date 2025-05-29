@@ -64,8 +64,16 @@ namespace EatUp.Gateway
                 var responseText = await new StreamReader(context.Response.Body).ReadToEndAsync();
                 context.Response.Body.Seek(0, SeekOrigin.Begin);
 
-                logger.LogInformation("Response {StatusCode} {Path} Body={Body}",
-                    context.Response.StatusCode, context.Request.Path, responseText);
+                if (context.Response.StatusCode >= 400)
+                {
+                    logger.LogError("Response {StatusCode} {Path} Body={Body}",
+                        context.Response.StatusCode, context.Request.Path, responseText);
+                }
+                else
+                {
+                    logger.LogInformation("Response {StatusCode} {Path} Body={Body}",
+                        context.Response.StatusCode, context.Request.Path, responseText);
+                }
 
                 await responseBody.CopyToAsync(originalBodyStream);
             };

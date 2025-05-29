@@ -15,9 +15,10 @@ using Stripe;
 namespace EatUp.Users.Services
 {
     public class UserService(
-        IRepository<User> userRepository, 
-        IRepository<RefreshTokenInformation> refreshTokenRepository, 
-        IConfiguration configuration, 
+        IRepository<User> userRepository,
+        IRepository<UserFavorite> userFavoriteRepository,
+        IRepository<RefreshTokenInformation> refreshTokenRepository,
+        IConfiguration configuration,
         IRabbitMqPublisher publisher) : IUserService
     {
         public async Task AddUser(AddUserDTO adduser)
@@ -204,6 +205,32 @@ namespace EatUp.Users.Services
             }
             await refreshTokenRepository.Delete(tokenFromDb.Id);
             await refreshTokenRepository.Save();
+        }
+
+        public async Task AddToFavorite(Guid mealId, Guid userId)
+        {
+            var existingFavorite = await userFavoriteRepository.GetByExpression(x => x.MealId == mealId && x.UserId == userId);
+            if (existingFavorite != null)
+            {
+                throw new ArgumentException("Meal is already in favorites");
+            }
+            await userFavoriteRepository.Insert(new UserFavorite
+            {
+                MealId = mealId,
+                UserId = userId,
+            });
+            await userRepository.Save();
+        }
+
+        public async Task UnFavorite(Guid mealId, Guid userId)
+        {
+            var existingFavorite = await userFavoriteRepository.GetByExpression(x => x.MealId == mealId && x.UserId == userId);
+            await userFavoriteRepository.Delete(existingFavorite.Id);
+        }
+
+        public async Task<IEnumerable<UserFavorite>> GetFavorites(Guid userId)
+        {
+            return (await userRepository.GetById(userId, includes: [x => x.Favorites])).Favorites;
         }
     }
 }

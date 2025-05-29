@@ -110,5 +110,47 @@ namespace EatUp.Users.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPost("favorites")]
+        public async Task<IActionResult> AddToFavorites([FromBody] Guid mealId, [FromHeader] Guid userId)
+        {
+            try
+            {
+                await userService.AddToFavorite(mealId, userId);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpDelete("favorites")]
+        public async Task<IActionResult> UnFavorite([FromBody] Guid mealId, [FromHeader] Guid userId)
+        {
+            try
+            {
+                await userService.UnFavorite(mealId, userId);
+                return Ok();
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("favorites")]
+        public async Task<IActionResult> GetFavorites([FromHeader] Guid userId)
+        {
+            try
+            {
+                return Ok(await userService.GetFavorites(userId));
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -13,6 +13,7 @@ namespace EatUp.Users.Models
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<UserFavorite> UserFavorites { get; set; }
 
         public override int SaveChanges()
         {

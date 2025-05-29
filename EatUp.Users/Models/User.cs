@@ -12,5 +12,8 @@ namespace EatUp.Users.Models
 
         [ForeignKey("UserId")]
         public virtual List<RefreshTokenInformation> RefreshTokens { get; set; } = [];
+
+        [ForeignKey("UserId")]
+        public virtual List<UserFavorite> Favorites { get; set; } = [];
     }
 }
