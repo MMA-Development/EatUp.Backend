@@ -9,7 +9,7 @@ namespace EatUp.Orders.EventHandlers
     {
         public async Task HandleAsync(MealCreatedEvent @event)
         {
-            var existing = repository.GetById(@event.Id);
+            var existing = await repository.GetById(@event.Id);
             if (existing != null)
             {
                 Console.WriteLine($"Meal already exists, skipping insertion {@event.Id}");
