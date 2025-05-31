@@ -155,7 +155,7 @@ namespace EatUp.Users.Services
 
         public async Task<UserDTO> GetUserById(Guid userId)
         {
-            var user = await userRepository.GetById(userId);
+            var user = await userRepository.GetById(userId, includes: [x => x.Favorites]);
             if (user == null)
                 throw new ArgumentException("User not found");
 
