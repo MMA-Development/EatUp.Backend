@@ -7,9 +7,9 @@ namespace EatUp.Meals.Services
 {
     public class CategoryService(IRepository<Category> repository) : ICategoryService
     {
-        public async Task<PaginationResult<Category>> GetPage(int skip, int take)
+        public async Task<PaginationResult<CategoryDTO>> GetPage(int skip, int take)
         {
-            return await repository.GetPage(skip, take, c => c);
+            return await repository.GetPage(skip, take, CategoryDTO.FromCategory);
         }
 
         public async Task<Guid> Create(AddCategoryDTO addCategoryDTO)

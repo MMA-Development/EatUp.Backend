@@ -127,6 +127,7 @@ namespace EatUp.Users.Controllers
 
 
         [HttpDelete("favorites")]
+        [Authorize(Policy = "user")]
         public async Task<IActionResult> UnFavorite([FromBody] Guid mealId)
         {
             try
@@ -141,6 +142,7 @@ namespace EatUp.Users.Controllers
         }
 
         [HttpGet("favorites")]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> GetFavorites()
         {
             try

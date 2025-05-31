@@ -17,7 +17,7 @@ namespace EatUp.Meals.DTO
         public string ImageUrl { get; set; }
         public DateTime FirstAvailablePickup { get; set; }
         public DateTime LastAvailablePickup { get; set; }
-        public virtual List<Category> Categories { get; set; } = [];
+        public virtual List<CategoryDTO> Categories { get; set; } = [];
         public int Available { get; set; }
         public double? AverageReview { get; set; }
 
@@ -31,7 +31,7 @@ namespace EatUp.Meals.DTO
             Price = meal.Price,
             Description = meal.Description,
             Quantity = meal.Quantity,
-            Categories = meal.Categories,
+            Categories = meal.Categories.Select(x => new CategoryDTO { Id = x.Id, Name = x.Name}).ToList(),
             FirstAvailablePickup = meal.FirstAvailablePickup,
             LastAvailablePickup = meal.LastAvailablePickup,
             MaxOrderQuantity = meal.MaxOrderQuantity,
