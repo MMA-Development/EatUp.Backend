@@ -115,6 +115,21 @@ namespace EatUp.Meals.Controllers
             }
         }
 
+        [HttpGet("favorites")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> GetFavorites([FromQuery] int take, [FromQuery] int skip)
+        {
+            try
+            {
+                var meals = await mealService.GetFavorites(UserId.Value, skip, take);
+                return Ok(meals);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("{mealId:guid}/review")]
         public async Task<IActionResult> AddReview([FromRoute] Guid mealId, [FromBody] AddReviewDTO review)
         {

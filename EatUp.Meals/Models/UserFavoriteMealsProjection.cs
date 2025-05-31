@@ -12,6 +12,7 @@ namespace EatUp.Meals.Models
         {
             Id = @event.Id,
             MealId = @event.MealId,
+            UserId = @event.UserId, 
         };
 
         internal static UserFavoriteMealsProjection? FromEvent(UserFavoriteHardResyncEvent @event) => new UserFavoriteMealsProjection()

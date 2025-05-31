@@ -12,10 +12,17 @@ namespace EatUp.Meals.Repositories
         {
             _context = context;
         }
-        public async Task<PaginationResult<TTo>> GetPage<TTo>(int skip, int take, Expression<Func<TEntity, TTo>> mapper, Expression<Func<TEntity, bool>>? filter = null, bool tracking = false, string? orderBy = null, bool ascending = false)
+        public async Task<PaginationResult<TTo>> GetPage<TTo>(int skip, int take, Expression<Func<TEntity, TTo>> mapper, Expression<Func<TEntity, bool>>? filter = null, bool tracking = false, string? orderBy = null, bool ascending = false, Expression<Func<TEntity, object>>[]? includes = null)
         {
             var query = _context.GetQuery<TEntity>(tracking);
 
+            if (includes != null && includes.Length > 0)
+            {
+                foreach (var include in includes)
+                {
+                    query = query.Include(include);
+                }
+            }
             if (filter != null)
             {
                 query = query.Where(filter);
@@ -71,10 +78,10 @@ namespace EatUp.Meals.Repositories
             _context.Remove(entity);
             return Task.CompletedTask;
         }
-        
+
         public Task Save()
         {
-             _context.SaveChanges();
+            _context.SaveChanges();
             return Task.CompletedTask;
         }
 

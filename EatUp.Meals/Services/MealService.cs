@@ -14,6 +14,7 @@ namespace EatUp.Meals.Services
         IRabbitMqPublisher publisher,
         IRepository<Category> categoryRepository,
         IRepository<Review> reviewRepository,
+        IRepository<UserFavoriteMealsProjection> userFavoriteMealsRepository,
         IRepository<CompletedOrderProjection> orderProjections) : IMealService
     {
         public async Task<Guid> AddMeal(Guid vendorId, AddMealDTO addMealDTO)
@@ -128,11 +129,16 @@ namespace EatUp.Meals.Services
             var userHasACompletedOrderForMeal = (await orderProjections.GetQuery()).Any(x => x.UserId == userId && x.MealId == mealId);
             if(!userHasACompletedOrderForMeal)
             {
-                throw new Exception("User has not completed an order for this meal. Cannot add review.");
+                throw new InvalidOperationException("User has not completed an order for this meal. Cannot add review.");
             }
             var review = reviewDto.ToReview(mealId, userId);
             await reviewRepository.Insert(review);
             await reviewRepository.Save();
+        }
+
+        public async Task<PaginationResult<MealDTO>> GetFavorites(Guid userId, int skip, int take)
+        {
+            return await repository.GetPage(skip, take, MealDTO.FromMeal, x => x.UserFavorites.Any(y => y.UserId == userId), includes: [x => x.UserFavorites]);
         }
     }
 }
