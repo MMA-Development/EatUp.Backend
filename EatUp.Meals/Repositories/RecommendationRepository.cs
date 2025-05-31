@@ -33,7 +33,7 @@ namespace EatUp.Meals.Repositories
                 })
                 .OrderByDescending(x => x.Count);
 
-            var query = meals.Where(x => recommendedMeals.Any(r => r.MealId == x.Id));
+            var query = meals.Where(x => recommendedMeals.Any(r => r.MealId == x.Id) && x.LastAvailablePickup > DateTime.UtcNow && x.DeletedAt == null);
             var total = query.Count();
             var recommended = await query
                 .Skip(skip)
