@@ -33,6 +33,7 @@ public class EventDispatcher(IServiceScopeFactory scopeFactory)
             if (handler == null)
             {
                 logger?.LogInformation("No handler registered for {EventType}", typeName);
+                return;
             }
 
             object? handlerTask = handler.GetType()
@@ -46,7 +47,7 @@ public class EventDispatcher(IServiceScopeFactory scopeFactory)
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error handling event {@event}: {ex.Message}");
+            logger?.LogError(ex, "Error handling event {EventType}: {Message}", @event.GetType().Name, ex.Message);
         }
     }
 }

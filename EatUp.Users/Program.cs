@@ -115,6 +115,7 @@ builder.Services.AddTransient<IUserService, UserService>();
 //EventHandlers
 builder.Services.AddSingleton<EventDispatcher>();
 builder.Services.AddTransient<IEventHandler<PerformUserHardResyncEvent>, PerformUserHardResyncEventHandler>();
+builder.Services.AddTransient<IEventHandler<PerformUserFavoriteHardResyncEvent>, PerformUserFavoriteHardResyncEventHandler>();
 
 builder.Services.AddSingleton<IRabbitMqPublisher>(x =>
     new RabbitMqPublisher(

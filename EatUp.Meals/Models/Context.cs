@@ -19,6 +19,8 @@ namespace EatUp.Meals.Models
 
         public DbSet<CompletedOrderProjection> CompletedOrderProjections { get; set; }
 
+        public DbSet<UserFavoriteMealsProjection> UserFavoriteMealsProjections { get; set; }
+
         public DbSet<Review> Reviews { get; set; }
 
         public override int SaveChanges()

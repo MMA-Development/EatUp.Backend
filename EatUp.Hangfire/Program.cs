@@ -19,6 +19,7 @@ builder.Services.AddTransient<IRabbitMqPublisher>(x =>
 builder.Services.AddScoped<PerformVendorHardResyncJob>();
 builder.Services.AddScoped<PerformUserHardResyncJob>();
 builder.Services.AddScoped<PerformMealHardResyncJob>();
+builder.Services.AddScoped<PerformUserFavoriteHardResyncJob>();
 
 var options = new DashboardOptions
 {

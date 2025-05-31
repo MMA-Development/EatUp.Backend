@@ -7,6 +7,7 @@ using EatUp.Meals.Services;
 using EatUp.RabbitMQ;
 using EatUp.RabbitMQ.Events.Meals;
 using EatUp.RabbitMQ.Events.Order;
+using EatUp.RabbitMQ.Events.Users;
 using EatUp.RabbitMQ.Events.Vendor;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -114,6 +115,7 @@ builder.Services.AddTransient<IRepository<Category>, Repository<Category>>();
 builder.Services.AddTransient<IRepository<VendorProjection>, Repository<VendorProjection>>();
 builder.Services.AddTransient<IRepository<CompletedOrderProjection>, Repository<CompletedOrderProjection>>();
 builder.Services.AddTransient<IRecommendationRepository, RecommendationRepository>();
+builder.Services.AddTransient<IRepository<UserFavoriteMealsProjection>, Repository<UserFavoriteMealsProjection>>();
 
 //services
 builder.Services.AddTransient<IMealService, MealService>();
@@ -126,6 +128,10 @@ builder.Services.AddTransient<IEventHandler<VendorCreatedEvent>, VendorCreatedEv
 builder.Services.AddTransient<IEventHandler<VendorUpdatedEvent>, VendorUpdatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorDeletedEvent>, VendorDeletedEventHandler>();
 builder.Services.AddTransient<IEventHandler<VendorHardResyncEvent>, VendorHardResyncEventHandler>();
+
+builder.Services.AddTransient<IEventHandler<UserFavoritedAMealEvent>, UserFavoritedAMealEventHandler>();
+builder.Services.AddTransient<IEventHandler<UserFavoriteHardResyncEvent>, UserFavoriteHardResyncEventHandler>();
+builder.Services.AddTransient<IEventHandler<UserUnFavoritedAMealEvent>, UserUnFavoritedAMealEventHandler>();
 
 builder.Services.AddTransient<IEventHandler<OrderCompletedEvent>, OrderCompletedEventHandler>();
 

@@ -214,18 +214,16 @@ namespace EatUp.Users.Services
             {
                 throw new ArgumentException("Meal is already in favorites");
             }
-            await userFavoriteRepository.Insert(new UserFavorite
-            {
-                MealId = mealId,
-                UserId = userId,
-            });
+            var d = await userFavoriteRepository.Insert(new UserFavorite(userId, mealId));
             await userRepository.Save();
+            await publisher.Publish(new UserFavoritedAMealEvent(d.Id, userId, mealId));
         }
 
         public async Task UnFavorite(Guid mealId, Guid userId)
         {
             var existingFavorite = await userFavoriteRepository.GetByExpression(x => x.MealId == mealId && x.UserId == userId);
             await userFavoriteRepository.Delete(existingFavorite.Id);
+            await publisher.Publish(new UserUnFavoritedAMealEvent(existingFavorite.Id));
         }
 
         public async Task<IEnumerable<UserFavorite>> GetFavorites(Guid userId)
