@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
+using EatUp.Orders;
 using EatUp.Orders.EventHandlers;
 using EatUp.Orders.Models;
 using EatUp.Orders.Repositories;
@@ -103,6 +104,12 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 });
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSeq(serverUrl: builder.Configuration["Seq:ServerUrl"], apiKey: builder.Configuration["Seq:ApiKey"]);
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -143,6 +150,7 @@ builder.Services.AddTransient<IEventHandler<MealCreatedEvent>, MealCreatedEventH
 builder.Services.AddTransient<IEventHandler<MealUpdatedEvent>, MealUpdatedEventHandler>();
 builder.Services.AddTransient<IEventHandler<MealDeletedEvent>, MealDeletedEventHandler>();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -154,10 +162,11 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     dbContext.Database.Migrate();
 
     var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
-    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "orders", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher);
+    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "orders", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher, logger);
     await consumer.Start();
 }
 
@@ -165,7 +174,6 @@ using (var scope = app.Services.CreateScope())
 var secret = builder.Configuration["StripeSettings:Secret"];
 StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:Secret"];
 
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.MapControllers();

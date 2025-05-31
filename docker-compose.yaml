@@ -89,6 +89,8 @@ services:
   eatup-users:
     image: ghcr.io/mma-development/eatup-users:${USERS_IMAGE_TAG}
     environment:
+      Seq__ServerUrl: ${Seq__Host}
+      Seq__ApiKey: ${Seq__ApiKey}
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpUsers;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
       VendorJwt__Secret: ${VENDOR_JWT_SECRET}
@@ -113,6 +115,8 @@ services:
   eatup-vendors:
     image: ghcr.io/mma-development/eatup-vendors:${VENDORS_IMAGE_TAG}
     environment:
+      Seq__ServerUrl: ${Seq__Host}
+      Seq__ApiKey: ${Seq__ApiKey}
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpVendors;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
       VendorJwt__Secret: ${VENDOR_JWT_SECRET}
@@ -139,6 +143,8 @@ services:
   eatup-orders:
     image: ghcr.io/mma-development/eatup-orders:${ORDERS_IMAGE_TAG}
     environment:
+      Seq__ServerUrl: ${Seq__Host}
+      Seq__ApiKey: ${Seq__ApiKey}
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpOrders;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
       VendorJwt__Secret: ${VENDOR_JWT_SECRET}
@@ -163,6 +169,8 @@ services:
   eatup-meals:
     image: ghcr.io/mma-development/eatup-meals:${MEALS_IMAGE_TAG}
     environment:
+      Seq__ServerUrl: ${Seq__Host}
+      Seq__ApiKey: ${Seq__ApiKey}
       ASPNETCORE_ENVIRONMENT: "Development"
       ConnectionStrings__DefaultConnection: "Server=mssql;Database=EatUpMeals;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;"
       VendorJwt__Secret: ${VENDOR_JWT_SECRET}

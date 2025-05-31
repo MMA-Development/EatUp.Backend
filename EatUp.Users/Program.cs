@@ -1,6 +1,7 @@
 using System.Text;
 using EatUp.RabbitMQ;
 using EatUp.RabbitMQ.Events.Users;
+using EatUp.Users;
 using EatUp.Users.EventHandlers;
 using EatUp.Users.Models;
 using EatUp.Users.Repositories;
@@ -92,6 +93,11 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSeq(serverUrl: builder.Configuration["Seq:ServerUrl"], apiKey: builder.Configuration["Seq:ApiKey"]);
+});
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -118,13 +124,15 @@ builder.Services.AddSingleton<IRabbitMqPublisher>(x =>
         builder.Configuration["RabbitMQ:Password"]
     ));
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     dbContext.Database.Migrate();
 
     var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
-    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "users", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher);
+    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "users", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher, logger);
     await consumer.Start();
 }
 // Configure the HTTP request pipeline.
@@ -139,7 +147,6 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 }
 StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:Secret"] ?? throw new NullReferenceException("StripeSettings:Secret is null");
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.MapControllers();

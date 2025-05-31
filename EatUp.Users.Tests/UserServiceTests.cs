@@ -17,12 +17,13 @@ namespace EatUp.Users.Tests
     public class UserServiceTests
     {
         private readonly Mock<IRepository<User>> _userRepoMock = new();
+        private readonly Mock<IRepository<UserFavorite>> _userFavoriteRepoMock = new();
         private readonly Mock<IRepository<RefreshTokenInformation>> _refreshTokenRepoMock = new();
         private readonly Mock<IConfiguration> _configMock = new();
         private readonly Mock<IRabbitMqPublisher> _publisherMock = new();
 
         private UserService CreateService() =>
-            new(_userRepoMock.Object, _refreshTokenRepoMock.Object, _configMock.Object, _publisherMock.Object);
+            new(_userRepoMock.Object, _userFavoriteRepoMock.Object, _refreshTokenRepoMock.Object, _configMock.Object, _publisherMock.Object);
 
         [Fact]
         public async Task AddUser_ShouldThrow_WhenUsernameTaken()

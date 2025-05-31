@@ -1,6 +1,7 @@
 ﻿using EatUp.RabbitMQ;
 using EatUp.RabbitMQ.Events.Vendor;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Reflection;
 using System.Text.Json;
@@ -21,7 +22,7 @@ public class EventDispatcher(IServiceScopeFactory scopeFactory)
         return null;
     }
 
-    internal async Task DispatchAsync(IEvent @event)
+    internal async Task DispatchAsync(IEvent @event, ILogger? logger = null)
     {
         try
         {
@@ -31,8 +32,7 @@ public class EventDispatcher(IServiceScopeFactory scopeFactory)
             var handler = scope.ServiceProvider.GetService(handlerType);
             if (handler == null)
             {
-                Console.WriteLine($"No handler registered for {typeName}");
-                return;
+                logger?.LogInformation("No handler registered for {EventType}", typeName);
             }
 
             object? handlerTask = handler.GetType()

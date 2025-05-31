@@ -1,4 +1,5 @@
 using System.Text;
+using EatUp.Meals;
 using EatUp.Meals.EventHandlers;
 using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
@@ -138,6 +139,11 @@ builder.Services.AddSingleton<IRabbitMqPublisher>(x =>
         builder.Configuration["RabbitMQ:Password"]
     ));
 
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSeq(serverUrl: builder.Configuration["Seq:ServerUrl"], apiKey: builder.Configuration["Seq:ApiKey"]);
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -149,13 +155,14 @@ if (app.Environment.IsDevelopment())
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+
     dbContext.Database.Migrate();
 
     var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
-    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "meals", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher);
+    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "meals", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher, logger);
     await consumer.Start();
 }
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.MapControllers();

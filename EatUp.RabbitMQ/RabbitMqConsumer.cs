@@ -1,4 +1,5 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 using System.Text.Json;
@@ -9,13 +10,15 @@ public class RabbitMqConsumer
     private readonly string _exchange;
     private readonly string _queue;
     private readonly EventDispatcher _dispatcher;
+    private readonly ILogger? _logger;
 
-    public RabbitMqConsumer(string hostName, string exchange, string queue, string username, string password, EventDispatcher dispatcher)
+    public RabbitMqConsumer(string hostName, string exchange, string queue, string username, string password, EventDispatcher dispatcher, ILogger? logger = null)
     {
         _factory = new ConnectionFactory { HostName = hostName, UserName = username, Password = password };
         _exchange = exchange;
         _queue = queue;
         _dispatcher = dispatcher;
+        _logger = logger;
     }
 
     public async Task Start()
@@ -32,21 +35,30 @@ public class RabbitMqConsumer
 
         consumer.ReceivedAsync += async (sender, args) =>
         {
-            Console.WriteLine("Message received");
             var body = Encoding.UTF8.GetString(args.Body.ToArray());
             var eventType = args.BasicProperties.Type ?? Encoding.UTF8.GetString((byte[])args.BasicProperties.Headers["Type"]);
 
-            var eventObj = _dispatcher.DeserializeEvent(body, eventType);
-            if (eventObj is not null)
+            using (_logger?.BeginScope(new Dictionary<string, object>
             {
-                try
+                ["MessageId"] = args.BasicProperties.MessageId,
+                ["MessageType"] = eventType,
+                ["Queue"] = _queue
+            }))
+            {
+                _logger?.LogInformation("Received message from RabbitMQ: {MessageId} {MessageType}", args.BasicProperties.MessageId, eventType);
+
+                var eventObj = _dispatcher.DeserializeEvent(body, eventType);
+                if (eventObj is not null)
                 {
-                    await _dispatcher.DispatchAsync(eventObj);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error dispatching event: {ex.Message}");
-                    return;
+                    try
+                    {
+                        await _dispatcher.DispatchAsync(eventObj, logger: _logger);
+                        _logger?.LogInformation("Sucessfully dispatched event: {MessageId} {EventType}", args.BasicProperties.MessageId, eventType);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogError(ex, "Error dispatching event: {MessageId} {EventType}", args.BasicProperties.MessageId, eventType);
+                    }
                 }
             }
         };

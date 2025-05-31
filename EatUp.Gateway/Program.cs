@@ -35,8 +35,6 @@ if (app.Environment.IsDevelopment())
 
 app.Use(Middleware.Logging);
 
-app.UseHttpsRedirection();
-
 app.MapReverseProxy(proxyPipeline =>
 {
     proxyPipeline.Use(Middleware.PayloadTransformer);

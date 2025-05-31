@@ -1,6 +1,7 @@
 using System.Text;
 using EatUp.RabbitMQ;
 using EatUp.RabbitMQ.Events.Vendor;
+using EatUp.Vendors;
 using EatUp.Vendors.EventHandlers;
 using EatUp.Vendors.Models;
 using EatUp.Vendors.Repositories;
@@ -93,6 +94,11 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSeq(serverUrl: builder.Configuration["Seq:ServerUrl"], apiKey: builder.Configuration["Seq:ApiKey"]);
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -129,16 +135,14 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<Context>();
     dbContext.Database.Migrate();
-
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
 
     var dispatcher = scope.ServiceProvider.GetRequiredService<EventDispatcher>();
-    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "vendors", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher);
+    var consumer = new RabbitMqConsumer(builder.Configuration["RabbitMQ:Host"], "events", "vendors", builder.Configuration["RabbitMQ:Username"], builder.Configuration["RabbitMQ:Password"], dispatcher, logger);
     await consumer.Start();
 }
 
 StripeConfiguration.ApiKey = builder.Configuration["StripeSettings:Secret"];
-
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 app.MapControllers();

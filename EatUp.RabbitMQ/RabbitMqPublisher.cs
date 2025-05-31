@@ -26,6 +26,7 @@ public class RabbitMqPublisher : IRabbitMqPublisher
         var props = new BasicProperties();
         props.Type = typeof(T).Name;
         props.Persistent = true;
+        props.MessageId = Guid.NewGuid().ToString();
 
         await channel.BasicPublishAsync(_exchangeName, "", false, props, body);
     }
