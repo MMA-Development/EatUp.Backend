@@ -5,6 +5,7 @@ namespace EatUp.Vendors.DTO
 {
     public class VendorDTO
     {
+        public Guid Id { get; set; }
         public string Name { get; set; } = null!;
         public string Logo { get; set; } = null!;
         public string Cvr { get; set; } = null!;
@@ -22,7 +23,8 @@ namespace EatUp.Vendors.DTO
                 Username = vendor.Username,
                 Email = vendor.Email,
                 Longitude = vendor.Location.X,
-                Latitude = vendor.Location.Y
+                Latitude = vendor.Location.Y,
+                Id = vendor.Id,
             };
     }
 }
