@@ -138,7 +138,7 @@ namespace EatUp.Meals.Services
 
         public async Task<PaginationResult<MealDTO>> GetFavorites(Guid userId, int skip, int take)
         {
-            return await repository.GetPage(skip, take, MealDTO.FromMeal, x => x.UserFavorites.Any(y => y.UserId == userId), includes: [x => x.UserFavorites]);
+            return await repository.GetPage(skip, take, MealDTO.FromMeal, x => x.UserFavorites.Any(y => y.UserId == userId && y.DeletedAt == null), includes: [x => x.UserFavorites]);
         }
     }
 }
