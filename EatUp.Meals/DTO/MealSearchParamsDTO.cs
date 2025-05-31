@@ -8,6 +8,6 @@
         public Guid[]? Categories { get; set; }
         public string? SortBy { get; set; }
         public bool Ascending { get; set; }
-        public Guid? VendorId { get; internal set; }
+        public Guid? VendorId { get;  set; }
     }
 }

@@ -10,16 +10,16 @@ namespace EatUp.Orders.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class OrdersController(IOrderService orderService): ControllerBase
+    public class OrdersController(IOrderService orderService): EatUpController
     {
 
         [HttpPost("request")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> CreateOrderRequest([FromBody] CreateOrderRequest request, [FromHeader] Guid userId)
+        public async Task<IActionResult> CreateOrderRequest([FromBody] CreateOrderRequest request)
         {
             try
             {
-                var result = await orderService.CreateOrderRequest(userId, request);
+                var result = await orderService.CreateOrderRequest(UserId.Value, request);
                 return Ok(result);
             }
             catch (ArgumentException ex)
@@ -29,7 +29,7 @@ namespace EatUp.Orders.Controllers
         }
 
         [HttpPost("update")]
-        public async Task<IActionResult> UpdateOrder([FromHeader] Guid userId)
+        public async Task<IActionResult> UpdateOrder()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
 

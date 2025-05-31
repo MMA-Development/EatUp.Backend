@@ -8,7 +8,7 @@ namespace EatUp.Users.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class UsersController(IUserService userService): ControllerBase
+    public class UsersController(IUserService userService): EatUpController
     {
 
         [HttpPost("signup")]

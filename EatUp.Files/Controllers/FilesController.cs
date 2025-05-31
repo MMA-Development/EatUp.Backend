@@ -4,7 +4,7 @@ namespace EatUp.Files.Controllers
 {
     [ApiController]
     [Route("[controller]/{containerName}")]
-    public class FilesController(IFileService fileService) : Controller
+    public class FilesController(IFileService fileService) : EatUpController
     {
         [HttpPost]
         public async Task<IActionResult> Upload(IFormFile file, string containerName)

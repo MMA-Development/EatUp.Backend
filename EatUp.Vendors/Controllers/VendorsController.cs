@@ -11,7 +11,7 @@ namespace EatUp.Vendors.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class VendorsController(IVendorservice vendorService) : ControllerBase
+    public class VendorsController(IVendorservice vendorService) : EatUpController
     {
 
         [HttpPost("signup")]
@@ -56,11 +56,11 @@ namespace EatUp.Vendors.Controllers
 
         [Authorize(Policy = "Vendor")]
         [HttpPut("me")]
-        public async Task<IActionResult> UpdateVendor([FromBody] UpdateVendorDTO vendorDTO, [FromHeader] Guid vendorId)
+        public async Task<IActionResult> UpdateVendor([FromBody] UpdateVendorDTO vendorDTO)
         {
             try
             {
-                await vendorService.UpdateVendor(vendorDTO, vendorId);
+                await vendorService.UpdateVendor(vendorDTO, VendorId.Value);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -94,11 +94,12 @@ namespace EatUp.Vendors.Controllers
 
 
         [HttpGet("me")]
-        public async Task<IActionResult> GetMe([FromHeader] Guid vendorId)
+        [Authorize(Policy = "Vendor")]
+        public async Task<IActionResult> GetMe()
         {
             try
             {
-                VendorDTO vendor = await vendorService.GetVendorById(vendorId);
+                VendorDTO vendor = await vendorService.GetVendorById(VendorId.Value);
                 return Ok(vendor);
             }
             catch (ArgumentException ex)
@@ -122,11 +123,12 @@ namespace EatUp.Vendors.Controllers
         }
 
         [HttpDelete("me")]
-        public async Task<IActionResult> Delete([FromHeader] Guid vendorId)
+        [Authorize(Policy = "Vendor")]
+        public async Task<IActionResult> Delete()
         {
             try
             {
-                await vendorService.Delete(vendorId);
+                await vendorService.Delete(VendorId.Value);
                 return Ok();
             }
             catch (ArgumentException ex)
