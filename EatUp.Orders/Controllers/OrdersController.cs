@@ -61,11 +61,11 @@ namespace EatUp.Orders.Controllers
 
         [HttpPost("{orderId:guid}/pickup")]
         [Authorize(Policy ="User")]
-        public async Task<IActionResult> PickupOrder(Guid orderId, [FromHeader] Guid userId)
+        public async Task<IActionResult> PickupOrder(Guid orderId)
         {
             try
             {
-                await orderService.PickupOrder(orderId, userId);
+                await orderService.PickupOrder(orderId, UserId.Value);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -76,23 +76,23 @@ namespace EatUp.Orders.Controllers
 
         [HttpGet("vendor")]
         [Authorize(Policy = "Vendor")]
-        public async Task<IActionResult> GetPageVendor([FromQuery] OrdersForVendorParams @params, [FromHeader] Guid vendorId)
+        public async Task<IActionResult> GetPageVendor([FromQuery] OrdersForVendorParams @params)
         {
-            var meals = await orderService.GetPageForVendor(@params, vendorId);
+            var meals = await orderService.GetPageForVendor(@params, VendorId.Value);
             return Ok(meals);
         }
 
         [HttpGet("user")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> GetPageVendor(int skip, int take, [FromHeader] Guid userId)
+        public async Task<IActionResult> GetPageVendor(int skip, int take)
         {
-            var meals = await orderService.GetPageForUser(skip, take, userId);
+            var meals = await orderService.GetPageForUser(skip, take, UserId.Value);
             return Ok(meals);
         }
 
         [HttpDelete("{orderId:guid}/cancel")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> Delete(Guid orderId, [FromHeader] Guid userId)
+        public async Task<IActionResult> Delete(Guid orderId)
         {
             try
             {

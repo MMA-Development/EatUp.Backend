@@ -54,11 +54,11 @@ namespace EatUp.Users.Controllers
 
         [HttpPut("me")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> UpdateVendor([FromBody] UpdateUserDTO userDTO, [FromHeader] Guid userId)
+        public async Task<IActionResult> UpdateVendor([FromBody] UpdateUserDTO userDTO)
         {
             try
             {
-                await userService.UpdateUser(userDTO, userId);
+                await userService.UpdateUser(userDTO, UserId.Value);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -69,11 +69,11 @@ namespace EatUp.Users.Controllers
 
         [HttpGet("me")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> GetUser([FromHeader] Guid userId)
+        public async Task<IActionResult> GetUser()
         {
             try
             {
-                UserDTO vendor = await userService.GetUserById(userId);
+                UserDTO vendor = await userService.GetUserById(UserId.Value);
                 return Ok(vendor);
             }
             catch (ArgumentException ex)
@@ -98,11 +98,11 @@ namespace EatUp.Users.Controllers
 
         [HttpDelete("me")]
         [Authorize(Policy = "User")]
-        public async Task<IActionResult> Delete([FromHeader] Guid userId)
+        public async Task<IActionResult> Delete()
         {
             try
             {
-                await userService.Delete(userId);
+                await userService.Delete(UserId.Value);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -112,11 +112,11 @@ namespace EatUp.Users.Controllers
         }
 
         [HttpPost("favorites")]
-        public async Task<IActionResult> AddToFavorites([FromBody] Guid mealId, [FromHeader] Guid userId)
+        public async Task<IActionResult> AddToFavorites([FromBody] Guid mealId)
         {
             try
             {
-                await userService.AddToFavorite(mealId, userId);
+                await userService.AddToFavorite(mealId, UserId.Value);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -127,11 +127,11 @@ namespace EatUp.Users.Controllers
 
 
         [HttpDelete("favorites")]
-        public async Task<IActionResult> UnFavorite([FromBody] Guid mealId, [FromHeader] Guid userId)
+        public async Task<IActionResult> UnFavorite([FromBody] Guid mealId)
         {
             try
             {
-                await userService.UnFavorite(mealId, userId);
+                await userService.UnFavorite(mealId, UserId.Value);
                 return Ok();
             }
             catch (ArgumentException ex)
@@ -141,11 +141,11 @@ namespace EatUp.Users.Controllers
         }
 
         [HttpGet("favorites")]
-        public async Task<IActionResult> GetFavorites([FromHeader] Guid userId)
+        public async Task<IActionResult> GetFavorites()
         {
             try
             {
-                return Ok(await userService.GetFavorites(userId));
+                return Ok(await userService.GetFavorites(UserId.Value));
             }
             catch (ArgumentException ex)
             {
