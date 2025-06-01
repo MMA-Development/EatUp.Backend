@@ -17,7 +17,7 @@ namespace EatUp.Users.EventHandlers
                 OriginalPrice = @event.OriginalPrice,
                 Quantity = @event.Quantity
             });
-            throw new NotImplementedException();
+            await repository.Save();
         }
     }
 }
