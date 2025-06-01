@@ -13,7 +13,7 @@ namespace EatUp.Orders.DTO
         public string FoodPackageTitle { get; set; }
         public PaymentStatusEnum PaymentStatus { get; set; }
         public string? PaymentId { get; set; }
-        public float Price { get; internal set; }
+        public double Price { get; internal set; }
         public int Quantity { get; set; }
         public DateTime? CreatedAt { get; set; }
 

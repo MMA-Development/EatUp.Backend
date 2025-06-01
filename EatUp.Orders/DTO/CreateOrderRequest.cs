@@ -5,34 +5,34 @@ namespace EatUp.Orders.DTO
     public class CreateOrderRequest
     {
         public Guid FoodPackageId { get; set; }
-        public float Price { get; set; }
-        public Guid VendorId { get; set; }
         public int Quantity { get; set; }
 
-        public Order ToOrder(string mealTitle, UserProjection user, string vendorName)
+        public Order ToOrder(MealProjection meal, UserProjection user, string vendorName)
         {
             return new Order
             {
                 UserId = user.Id,
                 UserName = user.Fullname,
                 FoodPackageId = FoodPackageId,
-                FoodPackageTitle = mealTitle,
+                FoodPackageTitle = meal.Title,
                 VendorName = vendorName,
-                PaymentStatus = PaymentStatusEnum.Pending,
-                Price = Price,
+                PaymentStatus = PaymentStatusEnum.Created,
+                Price = meal.Price * Quantity,
+                OriginalPrice = meal.OriginalPrice * Quantity,
                 StripeCustomerId = user.StripeCustomerId,
-                VendorId = VendorId,
+                VendorId = meal.VendorId,
                 Quantity = Quantity,
             };
         }
 
-        internal void Merge(Order order, string mealTitle, UserProjection user, string name)
+        internal void Merge(Order order, MealProjection meal, UserProjection user, string name)
         {
-            order.FoodPackageTitle = mealTitle;
+            order.FoodPackageTitle = meal.Title;
             order.VendorName = name;
-            order.VendorId = VendorId;
+            order.VendorId = meal.VendorId;
             order.FoodPackageId = FoodPackageId;
-            order.Price = Price;
+            order.Price = meal.Price * Quantity;
+            order.OriginalPrice = meal.OriginalPrice * Quantity;
             order.Quantity = Quantity;
         }
     }

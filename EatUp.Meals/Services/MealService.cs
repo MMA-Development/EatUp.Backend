@@ -105,7 +105,7 @@ namespace EatUp.Meals.Services
 
             updateMealDTO.MergeMeal(meal);
             meal.Categories.Clear();
-            await repository.Save(); 
+            await repository.Save();
             meal.Categories = (await categoryRepository.GetQuery(true))
                 .Where(x => updateMealDTO.Categories.Contains(x.Id))
                 .ToList();
@@ -120,7 +120,10 @@ namespace EatUp.Meals.Services
             Title = meal.Title,
             Id = meal.Id,
             Description = meal.Description,
-            Quantity = meal.Quantity
+            Quantity = meal.Quantity,
+            Price = meal.Price,
+            OriginalPrice = meal.OriginalPrice,
+            VendorId = meal.VendorId
         };
 
         private MealCreatedEvent ToMealCreatedEvent(Meal meal) => new()
@@ -128,7 +131,10 @@ namespace EatUp.Meals.Services
             Description = meal.Description,
             Id = meal.Id,
             Title = meal.Title,
-            Quantity = meal.Quantity
+            Quantity = meal.Quantity,
+            Price = meal.Price,
+            OriginalPrice = meal.OriginalPrice,
+            VendorId = meal.VendorId
         };
 
         public async Task<MealDTO> GetMeal(Guid mealId)

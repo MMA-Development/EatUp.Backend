@@ -86,7 +86,6 @@ namespace EatUp.Orders.Tests
             var request = new CreateOrderRequest
             {
                 FoodPackageId = Guid.NewGuid(),
-                VendorId = Guid.NewGuid(),
             };
 
             _mealProjRepoMock.Setup(r => r.GetById(request.FoodPackageId, false, false, null)).ReturnsAsync((MealProjection)null);

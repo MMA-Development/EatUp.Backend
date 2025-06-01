@@ -15,5 +15,8 @@ namespace EatUp.Users.Models
 
         [ForeignKey("UserId")]
         public virtual List<UserFavorite> Favorites { get; set; } = [];
+
+        [ForeignKey("UserId")]
+        public virtual List<OrderCompletedProjection> Orders { get; set; } = [];
     }
 }

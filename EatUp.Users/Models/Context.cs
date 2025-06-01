@@ -15,6 +15,8 @@ namespace EatUp.Users.Models
 
         public DbSet<UserFavorite> UserFavorites { get; set; }
 
+        public DbSet<OrderCompletedProjection> UserOrdersProjection { get; set; }
+
         public override int SaveChanges()
         {
             var entries = ChangeTracker.Entries()

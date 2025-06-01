@@ -56,7 +56,7 @@ namespace EatUp.Orders.Services
         public async Task<object> CreateOrderRequest(Guid userId, CreateOrderRequest request)
         {
             var meal = await mealProjections.GetById(request.FoodPackageId);
-            var vendor = await vendorProjections.GetById(request.VendorId);
+            var vendor = await vendorProjections.GetById(meal.VendorId);
             var user = await userProjections.GetById(userId);
 
             EnsureOrder(request, meal, vendor, user);
@@ -66,7 +66,7 @@ namespace EatUp.Orders.Services
 
             if (order == null)
             {
-                order = request.ToOrder(meal.Title, user, vendor.Name);
+                order = request.ToOrder(meal, user, vendor.Name);
                 await repository.Insert(order);
                 await repository.Save();
                 try
@@ -87,7 +87,7 @@ namespace EatUp.Orders.Services
             }
             else
             {
-                request.Merge(order, meal.Title, user, vendor.Name);
+                request.Merge(order, meal, user, vendor.Name);
                 await UpdatePaymentIntent(order);
             }
 
@@ -103,7 +103,7 @@ namespace EatUp.Orders.Services
 
         private void EnsureMealIsAvailable(CreateOrderRequest orderRequest, MealProjection meal)
         {
-            var ordersForMeal = repository.Query(x => x.FoodPackageId == orderRequest.FoodPackageId && x.VendorId == orderRequest.VendorId && x.PaymentStatus == PaymentStatusEnum.Completed);
+            var ordersForMeal = repository.Query(x => x.FoodPackageId == orderRequest.FoodPackageId && x.VendorId == meal.VendorId && (x.PaymentStatus == PaymentStatusEnum.Completed || x.PaymentStatus == PaymentStatusEnum.PickedUp));
             var totalBought = ordersForMeal.Sum(x => x.Quantity);
             if (meal.Quantity < totalBought + orderRequest.Quantity)
             {
@@ -178,7 +178,9 @@ namespace EatUp.Orders.Services
             MealId = order.FoodPackageId,
             Quantity = order.Quantity,
             UserId = order.UserId,
-            VendorId = order.VendorId
+            VendorId = order.VendorId,
+            OriginalPrice = order.OriginalPrice,
+            Price = order.Price,
         };
 
         public async Task HandlePaymentIntentFailed(PaymentIntent? paymentIntent)
