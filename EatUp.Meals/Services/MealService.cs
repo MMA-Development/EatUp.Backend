@@ -104,6 +104,7 @@ namespace EatUp.Meals.Services
 
 
             updateMealDTO.MergeMeal(meal);
+            meal.Categories.Clear();
             meal.Categories = (await categoryRepository.GetQuery(true))
                 .Where(x => updateMealDTO.Categories.Contains(x.Id))
                 .ToList();
