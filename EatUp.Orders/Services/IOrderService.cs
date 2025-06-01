@@ -13,5 +13,6 @@ namespace EatUp.Orders.Services
         Task HandlePaymentIntentFailed(PaymentIntent? paymentMethod);
         Task<PaginationResult<OrderDTO>> GetPageForUser(int skip, int take, Guid vendorId);
         Task PickupOrder(Guid orderId, Guid userId);
+        Task<object> GetRevenueByDateBetween(Guid vendorId, DateTime from, DateTime to);
     }
 }

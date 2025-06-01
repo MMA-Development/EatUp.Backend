@@ -129,6 +129,7 @@ builder.Services.AddTransient<IBaseRepository<Order>, Repository<Order>>();
 builder.Services.AddTransient<IBaseRepository<VendorProjection>, Repository<VendorProjection>>();
 builder.Services.AddTransient<IBaseRepository<UserProjection>, Repository<UserProjection>>();
 builder.Services.AddTransient<IBaseRepository<MealProjection>, Repository<MealProjection>>();
+builder.Services.AddTransient<IRevenueRepository, RevenueRepository>();
 
 builder.Services.AddTransient<IOrderService, OrderService>();
 

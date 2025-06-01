@@ -13,7 +13,8 @@ namespace EatUp.Orders.Services
         IBaseRepository<MealProjection> mealProjections,
         IBaseRepository<UserProjection> userProjections,
         IBaseRepository<VendorProjection> vendorProjections,
-        IRabbitMqPublisher publisher) : IOrderService
+        IRabbitMqPublisher publisher,
+        IRevenueRepository revenueRepository) : IOrderService
     {
         public async Task<PaginationResult<OrderDTO>> GetPageForVendor(OrdersForVendorParams @params, Guid vendorId)
         {
@@ -216,6 +217,11 @@ namespace EatUp.Orders.Services
             }
             order.PaymentStatus = PaymentStatusEnum.PickedUp;
             await repository.Save();
+        }
+
+        public async Task<object> GetRevenueByDateBetween(Guid vendorId, DateTime from, DateTime to)
+        {
+            return await revenueRepository.GetRevenueByDateBetween(vendorId, from, to);
         }
     }
 }

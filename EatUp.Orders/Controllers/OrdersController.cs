@@ -28,6 +28,27 @@ namespace EatUp.Orders.Controllers
             }
         }
 
+        /// <summary>
+        /// To get the revenue of the vendor by date range
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
+        [HttpGet("bydate")]
+        [Authorize(Policy = "Vendor")]
+        public async Task<IActionResult> GetOrdersByDate([FromQuery] DateTime from, DateTime to)
+        {
+            try
+            {
+                var orders = await orderService.GetRevenueByDateBetween( VendorId.Value, from, to);
+                return Ok(orders);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("update")]
         public async Task<IActionResult> UpdateOrder()
         {
