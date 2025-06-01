@@ -82,6 +82,21 @@ namespace EatUp.Users.Controllers
             }
         }
 
+        [HttpGet("stats")]
+        [Authorize(Policy = "User")]
+        public async Task<IActionResult> GetStats()
+        {
+            try
+            {
+                var stats = await userService.GetUserStats(UserId.Value);
+                return Ok(stats);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpPost("token")]
         public async Task<IActionResult> GetToken([FromBody] string refreshToken)
         {

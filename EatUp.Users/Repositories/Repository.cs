@@ -36,6 +36,11 @@ namespace EatUp.Users.Repositories
             return await _context.GetQuery(tracking, includes).FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        public async Task<TTo?> GetById<TTo>(Guid id, Expression<Func<TEntity, TTo>> mapper, bool tracking = false, params Expression<Func<TEntity, object>>[] includes)
+        {
+            return await _context.GetQuery(tracking, includes).Where(x => x.Id == id).Select(mapper).FirstOrDefaultAsync();
+        }
+
         public Task<TEntity> Insert(TEntity entity)
         {
             _context.Add(entity);

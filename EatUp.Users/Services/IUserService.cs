@@ -10,6 +10,7 @@ namespace EatUp.Users.Services
         Task Delete(Guid id);
         Task<IEnumerable<UserFavorite>> GetFavorites(Guid userId);
         Task<UserDTO> GetUserById(Guid vendorId);
+        Task<UserStatsDTO?> GetUserStats(Guid value);
         Task<UserTokens> RefreshToken(string refreshToken);
         Task<UserTokens> SignIn(SignInUserDTO singInUser);
         Task SignOut(string refreshToken);

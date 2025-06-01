@@ -231,5 +231,10 @@ namespace EatUp.Users.Services
         {
             return (await userRepository.GetById(userId, includes: [x => x.Favorites])).Favorites;
         }
+
+        public async Task<UserStatsDTO?> GetUserStats(Guid value)
+        {
+            return await userRepository.GetById(value, UserStatsDTO.Projection, includes: [x => x.Orders]);
+        }
     }
 }

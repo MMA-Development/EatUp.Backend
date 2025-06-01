@@ -20,5 +20,6 @@ namespace EatUp.Users.Repositories
         /// <param name="tracking"></param>
         /// <returns></returns>
         Task<IQueryable<TEntity>> GetAll(bool tracking = false);
+        Task<TTo?> GetById<TTo>(Guid id, Expression<Func<TEntity, TTo>> mapper, bool tracking = false, params Expression<Func<TEntity, object>>[] includes);
     }
 }
