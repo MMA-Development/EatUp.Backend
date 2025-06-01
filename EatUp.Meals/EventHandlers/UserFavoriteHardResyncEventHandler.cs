@@ -9,7 +9,7 @@ namespace EatUp.Meals.EventHandlers
     {
         public async Task HandleAsync(UserFavoriteHardResyncEvent @event)
         {
-            var existing = await repository.GetById(@event.Id, true);
+            var existing = await repository.GetById(@event.Id, true, ignoreFilters: true);
             if (existing == null)
             {
                 existing = UserFavoriteMealsProjection.FromEvent(@event);

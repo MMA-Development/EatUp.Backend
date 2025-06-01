@@ -1,5 +1,6 @@
 using System.Text;
 using EatUp.RabbitMQ;
+using EatUp.RabbitMQ.Events.Order;
 using EatUp.RabbitMQ.Events.Users;
 using EatUp.Users;
 using EatUp.Users.EventHandlers;
@@ -116,6 +117,7 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddSingleton<EventDispatcher>();
 builder.Services.AddTransient<IEventHandler<PerformUserHardResyncEvent>, PerformUserHardResyncEventHandler>();
 builder.Services.AddTransient<IEventHandler<PerformUserFavoriteHardResyncEvent>, PerformUserFavoriteHardResyncEventHandler>();
+builder.Services.AddTransient<IEventHandler<OrderCompletedEvent>, OrderCompletedEventHandler>();
 
 builder.Services.AddSingleton<IRabbitMqPublisher>(x =>
     new RabbitMqPublisher(

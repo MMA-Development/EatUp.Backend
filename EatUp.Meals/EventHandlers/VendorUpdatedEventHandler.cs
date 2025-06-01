@@ -9,7 +9,7 @@ namespace EatUp.Meals.EventHandlers
     {
         public async Task HandleAsync(VendorUpdatedEvent @event)
         {
-            var vendor = await repository.GetById(@event.Id, true);
+            var vendor = await repository.GetById(@event.Id, true, ignoreFilters: true);
             VendorProjection.Merge(vendor, @event);
             await repository.Save();
         }
