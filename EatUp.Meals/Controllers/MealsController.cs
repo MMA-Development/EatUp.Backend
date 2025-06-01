@@ -131,6 +131,7 @@ namespace EatUp.Meals.Controllers
         }
 
         [HttpPost("{mealId:guid}/review")]
+        [Authorize(Policy = "User")]
         public async Task<IActionResult> AddReview([FromRoute] Guid mealId, [FromBody] AddReviewDTO review)
         {
             try
