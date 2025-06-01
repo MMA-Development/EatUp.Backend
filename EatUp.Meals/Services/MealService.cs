@@ -5,6 +5,7 @@ using EatUp.Meals.Models;
 using EatUp.Meals.Repositories;
 using EatUp.RabbitMQ.Events.Meals;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EatUp.Meals.Services
 {
@@ -98,13 +99,13 @@ namespace EatUp.Meals.Services
 
         public async Task UpdateMeal(Guid mealId, Guid vendorId, UpdateMealDTO updateMealDTO)
         {
-            var meal = await repository.GetById(mealId, true);
+            var meal = await repository.GetById(mealId, true, includes: [x => x.Categories]);
             if (meal.VendorId != vendorId)
                 throw new Exception("Could not delete meal. Meal does not belong to vendor.");
 
-
             updateMealDTO.MergeMeal(meal);
             meal.Categories.Clear();
+            await repository.Save(); 
             meal.Categories = (await categoryRepository.GetQuery(true))
                 .Where(x => updateMealDTO.Categories.Contains(x.Id))
                 .ToList();
