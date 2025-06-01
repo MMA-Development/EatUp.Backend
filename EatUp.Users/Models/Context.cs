@@ -48,6 +48,7 @@ namespace EatUp.Users.Models
 
             modelBuilder.Entity<User>().HasQueryFilter(x => x.DeletedAt == null);
             modelBuilder.Entity<RefreshTokenInformation>().HasQueryFilter(x => x.DeletedAt == null || x.ExpirationDate < DateTime.Now);
+            modelBuilder.Entity<UserFavorite>().HasQueryFilter(x => x.DeletedAt == null);
 
             base.OnModelCreating(modelBuilder);
         }

@@ -59,6 +59,10 @@ namespace EatUp.Meals.Models
                 .UsingEntity(j => j.ToTable("MealsCategory"));
 
             modelBuilder.Entity<Meal>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<CompletedOrderProjection>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<UserFavoriteMealsProjection>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<VendorProjection>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<Review>().HasQueryFilter(x => x.DeletedAt == null);
 
             base.OnModelCreating(modelBuilder);
         }

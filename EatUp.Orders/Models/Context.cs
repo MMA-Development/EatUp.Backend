@@ -57,6 +57,9 @@ namespace EatUp.Orders.Models
             });
 
             modelBuilder.Entity<Order>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<VendorProjection>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<UserProjection>().HasQueryFilter(x => x.DeletedAt == null);
+            modelBuilder.Entity<MealProjection>().HasQueryFilter(x => x.DeletedAt == null);
             modelBuilder.Entity<Order>().Property(x => x.PaymentStatus).HasConversion<string>();
 
             base.OnModelCreating(modelBuilder);
