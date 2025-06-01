@@ -223,6 +223,7 @@ namespace EatUp.Users.Services
         {
             var existingFavorite = await userFavoriteRepository.GetByExpression(x => x.MealId == mealId && x.UserId == userId);
             await userFavoriteRepository.Delete(existingFavorite.Id);
+            await userFavoriteRepository.Save();
             await publisher.Publish(new UserUnFavoritedAMealEvent(existingFavorite.Id));
         }
 

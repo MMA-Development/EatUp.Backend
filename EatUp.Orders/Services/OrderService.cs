@@ -22,7 +22,8 @@ namespace EatUp.Orders.Services
         }
         public async Task<PaginationResult<OrderDTO>> GetPageForUser(int skip, int take, Guid userId)
         {
-            Expression<Func<Order, bool>> expression = x => x.UserId == userId;
+            var paymentStatus = PaymentStatusEnum.PickedUp | PaymentStatusEnum.Completed;
+            Expression<Func<Order, bool>> expression = x => x.UserId == userId && x.PaymentStatus == paymentStatus;
             return await repository.GetPage(skip, take, OrderDTO.FromEntity, expression, orderBy: "CreatedAt", ascending: false);
         }
 
