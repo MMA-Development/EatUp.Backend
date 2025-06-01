@@ -38,12 +38,23 @@ namespace EatUp.Meals.Services
             return mealsPage;
         }
 
-        private Expression<Func<Meal, bool>> BuildPaginationFilter(MealSearchParamsDTO mealSearchParams)
+        public async Task<PaginationResult<MealDTO>> GetPageVendor(MealSearchParamsDTO mealSearchParams)
+        {
+            var filter = BuildPaginationFilter(mealSearchParams, forVendor: true);
+            var mealsPage = await repository.GetPage(mealSearchParams.Skip, mealSearchParams.Take, MealDTO.FromMeal, filter, false, mealSearchParams.SortBy, mealSearchParams.Ascending);
+
+            return mealsPage;
+        }
+
+        private Expression<Func<Meal, bool>> BuildPaginationFilter(MealSearchParamsDTO mealSearchParams, bool forVendor = false)
         {
             var filters = new List<Expression<Func<Meal, bool>>>();
 
-            filters.Add(m => m.LastAvailablePickup >= DateTime.UtcNow);
-            filters.Add(m => m.Quantity - m.CompletedOrders.Sum(x => x.Quantity) > 0);
+            if (!forVendor)
+            {
+                filters.Add(m => m.LastAvailablePickup >= DateTime.UtcNow);
+                filters.Add(m => m.Quantity - m.CompletedOrders.Sum(x => x.Quantity) > 0);
+            }
             if (mealSearchParams.VendorId != null)
             {
                 filters.Add(m => m.VendorId == mealSearchParams.VendorId);
@@ -90,14 +101,14 @@ namespace EatUp.Meals.Services
             var meal = await repository.GetById(mealId, true);
             if (meal.VendorId != vendorId)
                 throw new Exception("Could not delete meal. Meal does not belong to vendor.");
-            
-            
+
+
             updateMealDTO.MergeMeal(meal);
             meal.Categories = (await categoryRepository.GetQuery(true))
                 .Where(x => updateMealDTO.Categories.Contains(x.Id))
                 .ToList();
             await repository.Save();
-            
+
             var @event = ToUpdateEvent(meal);
             await publisher.Publish(@event);
         }
@@ -109,7 +120,7 @@ namespace EatUp.Meals.Services
             Description = meal.Description,
             Quantity = meal.Quantity
         };
-        
+
         private MealCreatedEvent ToMealCreatedEvent(Meal meal) => new()
         {
             Description = meal.Description,
@@ -127,7 +138,7 @@ namespace EatUp.Meals.Services
         public async Task AddReview(Guid mealId, AddReviewDTO reviewDto, Guid userId)
         {
             var userHasACompletedOrderForMeal = (await orderProjections.GetQuery()).Any(x => x.UserId == userId && x.MealId == mealId);
-            if(!userHasACompletedOrderForMeal)
+            if (!userHasACompletedOrderForMeal)
             {
                 throw new InvalidOperationException("User has not completed an order for this meal. Cannot add review.");
             }

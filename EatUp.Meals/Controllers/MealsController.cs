@@ -47,7 +47,7 @@ namespace EatUp.Meals.Controllers
             try
             {
                 mealSearchParams.VendorId = VendorId.Value;
-                var meals = await mealService.GetPage(mealSearchParams);
+                var meals = await mealService.GetPageVendor(mealSearchParams);
                 return Ok(meals);
             }
             catch (Exception ex)

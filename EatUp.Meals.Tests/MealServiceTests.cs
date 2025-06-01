@@ -20,10 +20,11 @@ namespace EatUp.Meals.Tests
         private readonly Mock<IRepository<Category>> _categoryRepoMock = new();
         private readonly Mock<IRepository<Review>> _reviewRepoMock = new();
         private readonly Mock<IRepository<CompletedOrderProjection>> _orderRepoMock = new();
+        private readonly Mock<IRepository<UserFavoriteMealsProjection>> _userFavoriteRepoMock = new();
         private readonly Mock<IRabbitMqPublisher> _publisherMock = new();
 
         private MealService CreateService() =>
-            new(_mealRepoMock.Object, _vendorRepoMock.Object, _publisherMock.Object, _categoryRepoMock.Object, _reviewRepoMock.Object, _orderRepoMock.Object);
+            new(_mealRepoMock.Object, _vendorRepoMock.Object, _publisherMock.Object, _categoryRepoMock.Object, _reviewRepoMock.Object, _userFavoriteRepoMock.Object, _orderRepoMock.Object);
 
         [Fact]
         public async Task GetPage_ShouldReturnPaginationResult()
@@ -38,7 +39,7 @@ namespace EatUp.Meals.Tests
             };
             _mealRepoMock.Setup(r => r.GetPage(
                 searchParams.Skip, searchParams.Take, It.IsAny<Expression<Func<Meal, MealDTO>>>(),
-                It.IsAny<Expression<Func<Meal, bool>>>(), false, null, false))
+                It.IsAny<Expression<Func<Meal, bool>>>(), false, null, false, null))
                 .ReturnsAsync(expected);
 
             // Act

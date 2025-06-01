@@ -11,6 +11,7 @@ namespace EatUp.Meals.Services
         Task<PaginationResult<MealDTO>> GetFavorites(Guid value, int skip, int take);
         Task<MealDTO> GetMeal(Guid mealId);
         Task<PaginationResult<MealDTO>> GetPage(MealSearchParamsDTO mealSearchParams);
+        Task<PaginationResult<MealDTO>> GetPageVendor(MealSearchParamsDTO mealSearchParams);
         Task UpdateMeal(Guid mealId, Guid vendorId, UpdateMealDTO meal);
     }
 }
