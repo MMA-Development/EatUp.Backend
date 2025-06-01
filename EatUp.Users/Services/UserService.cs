@@ -215,7 +215,7 @@ namespace EatUp.Users.Services
                 throw new ArgumentException("Meal is already in favorites");
             }
             var d = await userFavoriteRepository.Insert(new UserFavorite(userId, mealId));
-            await userRepository.Save();
+            await userFavoriteRepository.Save();
             await publisher.Publish(new UserFavoritedAMealEvent(d.Id, userId, mealId));
         }
 

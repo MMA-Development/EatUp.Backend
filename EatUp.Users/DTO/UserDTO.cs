@@ -18,7 +18,7 @@ namespace EatUp.Users.DTO
                 Username = vendor.Username,
                 FullName = vendor.FullName,
                 StripeCustomerId = vendor.StripeCustomerId,
-                Favorites = vendor.Favorites.Select(x => new FavoriteDTO
+                Favorites = vendor.Favorites.Where(x => x.DeletedAt == null).Select(x => new FavoriteDTO
                 {
                     MealId = x.MealId,
                 }).ToList()
