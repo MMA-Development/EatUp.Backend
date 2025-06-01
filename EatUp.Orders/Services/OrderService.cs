@@ -73,6 +73,10 @@ namespace EatUp.Orders.Services
                 {
                     PaymentIntent paymentIntent = await CreatePaymentIntentForOrder(order);
                     EphemeralKey ephemeralKey = await CreateEphemeralKey(order.StripeCustomerId);
+                    order.PaymentId = paymentIntent.Id;
+                    order.EphemeralKey = ephemeralKey.Secret;
+                    order.PaymentSecret = paymentIntent.ClientSecret;
+                    order.PaymentStatus = PaymentStatusEnum.Pending;
                 }
                 catch (StripeException ex)
                 {
@@ -80,10 +84,6 @@ namespace EatUp.Orders.Services
                     await repository.Save();
                     throw new InvalidOperationException("Failed to create payment intent", ex);
                 }
-                order.PaymentId = paymentIntent.Id;
-                order.EphemeralKey = ephemeralKey.Secret;
-                order.PaymentSecret = paymentIntent.ClientSecret;
-                order.PaymentStatus = PaymentStatusEnum.Pending;
             }
             else
             {
