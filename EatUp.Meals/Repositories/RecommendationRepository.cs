@@ -18,22 +18,11 @@ namespace EatUp.Meals.Repositories
                 .OrderByDescending(x => x.Count)
                 .FirstOrDefaultAsync();
 
-            var recommendedMeals = _context.GetQuery<CompletedOrderProjection>()
-                .Join(meals, order => order.MealId, m => m.Id, (order, meal) => new
-                {
-                    MealId = meal.Id,
-                    MealCategories = meal.Categories,
-                })
-                .Where(x => mostBoughtCategory != null && x.MealCategories.Any(x => x.Id == mostBoughtCategory.CategoryId) || true)
-                .GroupBy(x => x.MealId)
-                .Select(m => new
-                {
-                    MealId = m.Key,
-                    Count = m.Count()
-                })
-                .OrderByDescending(x => x.Count);
 
-            var query = meals.Where(x => recommendedMeals.Any(r => r.MealId == x.Id) && x.LastAvailablePickup > DateTime.UtcNow && x.DeletedAt == null && x.CompletedOrders.Sum(y => y.Quantity) < x.Quantity );
+            var recommendMeals = _context.GetQuery<Meal>().Where(m => m.Categories.Any(x => mostBoughtCategory != null && m.Categories.Any(c => c.Id == mostBoughtCategory.CategoryId) || true));
+
+            var query = recommendMeals.Where(x => x.LastAvailablePickup > DateTime.UtcNow && x.DeletedAt == null && x.CompletedOrders.Sum(y => y.Quantity) < x.Quantity )
+                .OrderByDescending(x => x.CompletedOrders);
             var total = query.Count();
             var recommended = await query
                 .Skip(skip)
