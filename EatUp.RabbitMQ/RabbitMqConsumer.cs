@@ -14,7 +14,10 @@ public class RabbitMqConsumer
 
     public RabbitMqConsumer(string hostName, string exchange, string queue, string username, string password, EventDispatcher dispatcher, ILogger? logger = null)
     {
-        _factory = new ConnectionFactory { HostName = hostName, UserName = username, Password = password };
+
+        var uri = new Uri(hostName);
+        var port = uri.Port == -1 ? 5672 : uri.Port;
+        _factory = new ConnectionFactory { HostName = hostName, Port = port, UserName = username, Password = password };
         _exchange = exchange;
         _queue = queue;
         _dispatcher = dispatcher;
