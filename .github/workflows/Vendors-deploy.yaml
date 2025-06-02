@@ -74,7 +74,7 @@ jobs:
         resourceGroup: EatUp
         containerAppName: eatup-vendors
         containerAppEnvironment: managedEnvironment-EatUp-a499
-        imageToDeploy: ghcr.io/mma-development/eatup-vendors:${{github.sha}}}}
+        imageToDeploy: ghcr.io/mma-development/eatup-vendors:${{github.sha}}
         registryUrl: ghcr.io
         registryUsername: ${{ secrets.GHCR_USERNAME }}
         registryPassword: ${{ secrets.GHCR_PAT }}
