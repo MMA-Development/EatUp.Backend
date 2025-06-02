@@ -10,7 +10,7 @@ public class RabbitMqPublisher : IRabbitMqPublisher
 
     public RabbitMqPublisher(string hostName, string exchangeName, string username, string password)
     {
-        _factory = new ConnectionFactory { HostName = hostName, UserName = username, Password = password };
+        _factory = new ConnectionFactory { Uri = new Uri(hostName)};
         _exchangeName = exchangeName;
     }
 
