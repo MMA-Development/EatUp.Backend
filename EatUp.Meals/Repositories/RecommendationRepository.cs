@@ -22,7 +22,8 @@ namespace EatUp.Meals.Repositories
             var recommendMeals = _context.GetQuery<Meal>().Where(m => m.Categories.Any(x => mostBoughtCategory != null && m.Categories.Any(c => c.Id == mostBoughtCategory.CategoryId) || true));
 
             var query = recommendMeals.Where(x => x.LastAvailablePickup > DateTime.UtcNow && x.DeletedAt == null && x.CompletedOrders.Sum(y => y.Quantity) < x.Quantity )
-                .OrderByDescending(x => x.CompletedOrders);
+                .OrderByDescending(x => x.CompletedOrders.Count());
+
             var total = query.Count();
             var recommended = await query
                 .Skip(skip)
