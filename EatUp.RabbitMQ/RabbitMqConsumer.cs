@@ -14,7 +14,7 @@ public class RabbitMqConsumer
 
     public RabbitMqConsumer(string hostName, string exchange, string queue, string username, string password, EventDispatcher dispatcher, ILogger? logger = null)
     {
-        Uri uri = hostName.Contains("amqp://") ? new Uri(hostName) : new Uri($"amqp://{username}:{password}@{hostName}");
+        Uri uri = hostName.Contains("amqps://") ? new Uri(hostName) : new Uri($"amqps://{username}:{password}@{hostName}");
         _factory = new ConnectionFactory { Uri = uri };
         _exchange = exchange;
         _queue = queue;
