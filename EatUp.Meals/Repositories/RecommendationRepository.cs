@@ -19,7 +19,12 @@ namespace EatUp.Meals.Repositories
                 .FirstOrDefaultAsync();
 
 
-            var recommendMeals = _context.GetQuery<Meal>().Where(m => m.Categories.Any(x => mostBoughtCategory != null && m.Categories.Any(c => c.Id == mostBoughtCategory.CategoryId) || true));
+            var recommendMeals = _context.GetQuery<Meal>();
+            if (mostBoughtCategory != null && mostBoughtCategory.CategoryId != Guid.Empty)
+            {
+                recommendMeals = recommendMeals
+                    .Where(x => x.Categories.Any(c => c.Id == mostBoughtCategory.CategoryId));
+            }
 
             var query = recommendMeals.Where(x => x.LastAvailablePickup > DateTime.UtcNow && x.DeletedAt == null && x.CompletedOrders.Sum(y => y.Quantity) < x.Quantity )
                 .OrderByDescending(x => x.CompletedOrders.Count());
