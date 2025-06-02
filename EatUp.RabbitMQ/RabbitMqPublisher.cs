@@ -10,7 +10,7 @@ public class RabbitMqPublisher : IRabbitMqPublisher
 
     public RabbitMqPublisher(string hostName, string exchangeName, string username, string password)
     {
-        Uri uri = hostName.Contains("amqps://") ? new Uri(hostName) : new Uri($"amqps://{username}:{password}@{hostName}");
+        Uri uri = hostName.Contains("://") ? new Uri(hostName) : new Uri($"amqps://{username}:{password}@{hostName}");
 
         _factory = new ConnectionFactory { Uri = uri};
         _exchangeName = exchangeName;
