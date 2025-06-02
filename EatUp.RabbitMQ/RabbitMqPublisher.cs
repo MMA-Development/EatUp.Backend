@@ -10,9 +10,7 @@ public class RabbitMqPublisher : IRabbitMqPublisher
 
     public RabbitMqPublisher(string hostName, string exchangeName, string username, string password)
     {
-        var uri = new Uri(hostName);
-        var port = uri.Port == -1 ? 5672 : uri.Port;
-        _factory = new ConnectionFactory { HostName = hostName, UserName = username, Port = port, Password = password };
+        _factory = new ConnectionFactory { HostName = hostName, UserName = username, Password = password };
         _exchangeName = exchangeName;
     }
 
